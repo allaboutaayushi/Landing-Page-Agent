@@ -1,0 +1,552 @@
+/* ==========================================================================
+   Section layout.
+
+   Everything here sits over the WebGL tunnel, so backgrounds stay absent —
+   the ink comes from the canvas. Structure is carried by hairlines and
+   whitespace, never by boxes.
+   ========================================================================== */
+
+/* --------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(6rem, 12vh, 9rem) var(--gutter) clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.heroMark {
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  display: grid;
+  gap: 0;
+  /* Sits over the lens, so it needs to punch through the glass. */
+  mix-blend-mode: difference;
+}
+
+.heroMarkLine {
+  display: block;
+}
+
+.heroMeta {
+  grid-row: 2;
+  max-width: 34ch;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.heroLede {
+  text-wrap: balance;
+}
+
+.heroSub {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  max-width: 42ch;
+}
+
+.heroCta {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.scrollHint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  color: var(--bone-dim);
+}
+
+.scrollRule {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--bone-faint), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+/* A tick that keeps falling down the rule. */
+.scrollRule::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: 12px;
+  background: var(--bone);
+  animation: tick 1.9s var(--ease-inout) infinite;
+}
+
+@keyframes tick {
+  0% {
+    transform: translateY(-14px);
+  }
+  100% {
+    transform: translateY(46px);
+  }
+}
+
+/* --------------------------------------------------- shared bits */
+
+.eyebrow {
+  display: block;
+  margin-bottom: clamp(1rem, 2vw, 1.75rem);
+}
+
+.sectionHead {
+  font-size: var(--t-section);
+  display: grid;
+}
+
+.headLine {
+  display: block;
+}
+
+.pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.6rem;
+  border: 1px solid var(--bone-faint);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.45s var(--ease-out), border-color 0.45s var(--ease-out);
+}
+
+/* Fill wipes up from the bottom on hover — no fade, no shadow. */
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bone);
+  transform: translate3d(0, 101%, 0);
+  transition: transform 0.55s var(--ease-inout);
+  z-index: -1;
+}
+
+.pill:hover {
+  color: var(--ink);
+  border-color: var(--bone);
+}
+
+.pill:hover::before {
+  transform: translate3d(0, 0, 0);
+}
+
+.pill i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  transition: transform 0.45s var(--ease-out);
+}
+
+.pill:hover i {
+  transform: scale(1.9);
+}
+
+.pillLarge {
+  padding: 1.15rem 2.2rem;
+  font-size: calc(var(--t-micro) * 1.15);
+}
+
+/* --------------------------------------------------- what is */
+
+.whatIs {
+  position: relative;
+  padding: clamp(8rem, 22vh, 16rem) var(--gutter) clamp(6rem, 16vh, 12rem);
+  display: grid;
+  gap: clamp(3rem, 8vh, 6rem);
+}
+
+.whatIsHead {
+  max-width: 20ch;
+}
+
+.whatIsBody {
+  display: grid;
+  gap: 1.4rem;
+  max-width: 60ch;
+  justify-self: end;
+  text-align: left;
+}
+
+.whatIsLede {
+  max-width: 26ch;
+}
+
+.whatIsCopy {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 52ch;
+}
+
+/* --- the five statements --- */
+
+.statements {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.statement {
+  display: grid;
+}
+
+.statementRow {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0.4rem clamp(1rem, 3vw, 3rem);
+  padding-block: clamp(1.6rem, 4vh, 3rem);
+  align-items: start;
+}
+
+.statementIndex {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 0.5em;
+}
+
+.statementTitle {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: var(--t-station);
+  letter-spacing: -0.04em;
+}
+
+.statementTitle em {
+  font-style: normal;
+}
+
+.statementLine {
+  grid-column: 2;
+  grid-row: 2;
+  max-width: 46ch;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+/* --- closer --- */
+
+.closer {
+  display: grid;
+  gap: clamp(1.5rem, 4vh, 2.5rem);
+  padding-top: clamp(2rem, 6vh, 4rem);
+}
+
+.closerLead {
+  font-size: var(--t-station);
+  max-width: 18ch;
+}
+
+.closerKicks {
+  display: grid;
+  gap: 0.15em;
+  justify-self: end;
+  text-align: right;
+}
+
+.closerKick {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: clamp(1.4rem, 3.4vw, 3rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  display: block;
+}
+
+/* One colour per denial — the three lines are the loudest colour moment on
+   the page, and the only place three hues appear together. */
+.closerKicks :global(.line-mask):nth-child(1) .closerKick {
+  color: var(--red);
+}
+.closerKicks :global(.line-mask):nth-child(2) .closerKick {
+  color: var(--cyan);
+}
+.closerKicks :global(.line-mask):nth-child(3) .closerKick {
+  color: var(--yellow);
+}
+
+/* --------------------------------------------------- experience */
+
+.experience {
+  position: relative;
+}
+
+.stationBlock {
+  height: 130vh;
+  height: calc(var(--vh, 1vh) * 130);
+  position: relative;
+}
+
+.stationSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  display: grid;
+  align-content: center;
+  gap: 0.5rem;
+  padding: 0 var(--gutter);
+  will-change: transform, opacity;
+}
+
+/* Caption sits opposite the ring's own offset so type and image never stack. */
+.stationBlock[data-side='left'] .stationSticky {
+  justify-items: start;
+  text-align: left;
+  padding-right: 52vw;
+}
+
+.stationBlock[data-side='right'] .stationSticky {
+  justify-items: end;
+  text-align: right;
+  padding-left: 52vw;
+}
+
+.stationIndex {
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+.stationTitle {
+  font-size: var(--t-station);
+  text-wrap: balance;
+}
+
+.stationLine {
+  margin: 0.6rem 0 0;
+  max-width: 24ch;
+  font-size: 1.02rem;
+  line-height: 1.4;
+  color: var(--bone-dim);
+}
+
+.indexReadout {
+  position: fixed;
+  left: var(--gutter);
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+
+.indexReadout[data-show='true'] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.indexCurrent {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+}
+
+.indexRule {
+  width: 34px;
+  height: 1px;
+  background: var(--bone-faint);
+}
+
+/* --------------------------------------------------- what to expect */
+
+.expect {
+  position: relative;
+  padding: clamp(7rem, 18vh, 13rem) var(--gutter) clamp(5rem, 12vh, 9rem);
+  display: grid;
+  gap: clamp(2.5rem, 7vh, 5rem);
+}
+
+.expectHead {
+  max-width: 18ch;
+}
+
+.expectList {
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.expectRow {
+  display: grid;
+}
+
+.expectRowInner {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 10ch) minmax(0, 1fr);
+  gap: clamp(0.75rem, 3vw, 3rem);
+  align-items: baseline;
+  padding-block: clamp(1.2rem, 3vh, 2.2rem);
+  transition: opacity 0.4s var(--ease-out);
+}
+
+.expectIndex {
+  align-self: baseline;
+}
+
+.expectKey {
+  font-size: clamp(1.1rem, 2vw, 1.8rem);
+  letter-spacing: -0.02em;
+  margin: 0;
+  transition: color 0.4s var(--ease-out);
+}
+
+.expectRow:hover .expectKey {
+  color: var(--accent);
+}
+
+.expectVal {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  max-width: 46ch;
+}
+
+/* --------------------------------------------------- get in */
+
+/* Two viewports tall so the finale has scroll to breathe in — the glass needs
+   room to be played with before the page ends under you. */
+/* Two viewports tall so the finale has scroll to breathe in. The grid rows
+   are what keep the footer pinned to the very bottom of the section while the
+   content above it stays stuck to the viewport for the full first screen. */
+.getIn {
+  position: relative;
+  min-height: 200vh;
+  min-height: calc(var(--vh, 1vh) * 200);
+  padding-inline: var(--gutter);
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.getInInner {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  text-align: center;
+  gap: clamp(1rem, 2.5vh, 1.75rem);
+}
+
+.getInHead {
+  font-size: var(--t-display);
+  display: grid;
+  /* Over the WebGL wordmark, so it has to cut through. */
+  mix-blend-mode: difference;
+}
+
+.getInLine {
+  max-width: 26ch;
+}
+
+.getInHint {
+  margin: clamp(1rem, 3vh, 2rem) 0 0;
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------- footer */
+
+.footer {
+  position: relative;
+  align-self: end;
+  padding-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.footerRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: clamp(1rem, 2.5vh, 1.75rem);
+}
+
+.footerMark {
+  font-size: clamp(0.85rem, 1.15vw, 1.05rem);
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------- narrow */
+
+@media (max-width: 860px) {
+  .whatIsBody {
+    justify-self: start;
+  }
+
+  .closerKicks {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .statementRow {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  /* Captions centre up on mobile — there's no room to sit beside the ring, so
+     the type goes over it and the image reads through from behind. */
+  .stationBlock[data-side='left'] .stationSticky,
+  .stationBlock[data-side='right'] .stationSticky {
+    padding-inline: var(--gutter);
+    justify-items: start;
+    text-align: left;
+    align-content: end;
+    padding-bottom: 18vh;
+  }
+
+  .stationBlock {
+    height: 115vh;
+    height: calc(var(--vh, 1vh) * 115);
+  }
+
+  .expectRowInner {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .expectVal {
+    grid-column: 2;
+  }
+
+  .heroCta {
+    position: static;
+    justify-self: start;
+    margin-top: 1.5rem;
+  }
+
+  .heroMeta {
+    gap: 0.6rem;
+  }
+
+  .scrollHint {
+    display: none;
+  }
+}

@@ -1,0 +1,94 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  opacity: 1;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+:global(html.nf-cursor-out) .root {
+  opacity: 0;
+}
+
+/* Only render once we know we're on a precise pointer. */
+.root {
+  display: none;
+}
+:global(html.nf-cursor-ready) .root {
+  display: block;
+}
+
+.dot,
+.ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--bone);
+  transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out),
+    margin 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+
+.ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid var(--bone);
+  display: grid;
+  place-items: center;
+  transition: width 0.42s var(--ease-out), height 0.42s var(--ease-out),
+    margin 0.42s var(--ease-out), background-color 0.42s var(--ease-out),
+    border-color 0.42s var(--ease-out);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+  white-space: nowrap;
+}
+
+/* --- modes --- */
+
+.root[data-mode='hover'] .ring {
+  width: 62px;
+  height: 62px;
+  margin: -31px 0 0 -31px;
+  background: var(--bone);
+}
+.root[data-mode='hover'] .dot {
+  opacity: 0;
+}
+
+.root[data-mode='view'] .ring,
+.root[data-mode='drag'] .ring {
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  background: var(--bone);
+}
+.root[data-mode='view'] .dot,
+.root[data-mode='drag'] .dot {
+  opacity: 0;
+}
+
+.root[data-mode='view'] .label,
+.root[data-mode='drag'] .label,
+.root[data-mode='hover'] .label {
+  opacity: 1;
+  transform: scale(1);
+}

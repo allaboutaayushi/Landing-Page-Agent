@@ -1,0 +1,248 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 7000;
+  pointer-events: none;
+}
+
+.root[data-open='true'] {
+  pointer-events: all;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 11, 12, 0.72);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out);
+  cursor: pointer;
+}
+
+.root[data-open='true'] .scrim {
+  opacity: 1;
+}
+
+/* A slab that rises, matching the preloader's vocabulary. */
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bone);
+  color: var(--ink);
+  transform: translate3d(0, 100%, 0);
+  transition: transform 0.85s var(--ease-inout);
+  will-change: transform;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.root[data-open='true'] .panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.panelInner {
+  padding: clamp(2.25rem, 6vw, 4.5rem) var(--gutter) clamp(1.75rem, 4vw, 3rem);
+  display: grid;
+  gap: 0.9rem;
+  max-width: 62rem;
+  margin-inline: auto;
+}
+
+.heading {
+  font-size: clamp(1.6rem, 4.4vw, 3.6rem);
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.lede {
+  margin: 0;
+  max-width: 30ch;
+}
+
+.sub {
+  margin: 0;
+  color: rgba(11, 11, 12, 0.58);
+  font-size: 0.98rem;
+}
+
+.success {
+  font-size: clamp(1.3rem, 3.2vw, 2.4rem);
+  color: var(--green);
+  margin: 1rem 0;
+  letter-spacing: -0.03em;
+}
+
+.form {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
+
+.field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  border-bottom: 1px solid rgba(11, 11, 12, 0.22);
+  padding-bottom: 0.7rem;
+  transition: border-color 0.35s var(--ease-out);
+}
+
+.field:focus-within {
+  border-color: var(--ink);
+}
+
+.dial {
+  font-family: var(--font-mono);
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  letter-spacing: 0.06em;
+  color: rgba(11, 11, 12, 0.55);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.25rem, 3.2vw, 2.2rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  padding: 0;
+}
+
+.input::placeholder {
+  color: rgba(11, 11, 12, 0.28);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Honeypot: off-canvas rather than hidden, so scripted fillers still find it. */
+.trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.consent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  cursor: pointer;
+  max-width: 52ch;
+}
+
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.checkboxBox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(11, 11, 12, 0.35);
+  display: block;
+  margin-top: 2px;
+  position: relative;
+  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+.checkboxBox::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--bone);
+  transform: scale(0);
+  transition: transform 0.3s var(--ease-out);
+}
+
+.checkbox:checked + .checkboxBox {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.checkbox:checked + .checkboxBox::after {
+  transform: scale(1);
+  clip-path: polygon(14% 46%, 0 60%, 40% 100%, 100% 22%, 86% 8%, 38% 70%);
+  background: var(--bone);
+  inset: 2px;
+}
+
+.checkbox:focus-visible + .checkboxBox {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.consentText {
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: rgba(11, 11, 12, 0.68);
+}
+
+.error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--red);
+}
+
+.submit {
+  justify-self: start;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--bone);
+  padding: 1.05rem 2rem;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.45s var(--ease-out);
+}
+
+.submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  transform: translate3d(0, 101%, 0);
+  transition: transform 0.5s var(--ease-inout);
+  z-index: -1;
+}
+
+.submit:hover:not(:disabled)::before {
+  transform: translate3d(0, 0, 0);
+}
+
+.submit:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.dismiss {
+  justify-self: start;
+  margin-top: 0.5rem;
+  color: rgba(11, 11, 12, 0.45);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.3s var(--ease-out);
+}
+
+.dismiss:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition-duration: 0.25s;
+  }
+}
