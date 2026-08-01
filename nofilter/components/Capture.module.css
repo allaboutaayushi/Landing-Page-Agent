@@ -23,6 +23,24 @@
   opacity: 1;
 }
 
+/*
+ * The door.
+ *
+ * Lighter tint but a much heavier blur than the invitation scrim: the scene
+ * keeps its motion and its colour and loses only its detail, so there is
+ * something to want on the other side. The blur ramps rather than snaps —
+ * the page is briefly legible, then goes soft, which is the whole beat.
+ */
+.root[data-gate='true'] .scrim {
+  background: rgba(11, 11, 12, 0.55);
+  backdrop-filter: blur(26px) saturate(1.25);
+  -webkit-backdrop-filter: blur(26px) saturate(1.25);
+  cursor: default;
+  transition:
+    opacity 1.1s var(--ease-out),
+    backdrop-filter 1.4s var(--ease-out);
+}
+
 /* A slab that rises, matching the preloader's vocabulary. */
 .panel {
   position: absolute;
@@ -48,6 +66,40 @@
   gap: 0.9rem;
   max-width: 62rem;
   margin-inline: auto;
+}
+
+/*
+ * As the door, the slab becomes a card: bottom-anchored still, but inset and
+ * capped so the blurred scene reads around all four edges. A full-bleed slab
+ * would hide the very thing the blur is meant to tease.
+ */
+.root[data-gate='true'] .panel {
+  left: 50%;
+  right: auto;
+  bottom: clamp(1rem, 5vh, 4rem);
+  width: min(38rem, calc(100vw - 2 * var(--gutter)));
+  max-height: min(88vh, 44rem);
+  transform: translate3d(-50%, calc(100% + 6rem), 0);
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.55);
+}
+
+.root[data-gate='true'][data-open='true'] .panel {
+  transform: translate3d(-50%, 0, 0);
+}
+
+.root[data-gate='true'] .panelInner {
+  padding: clamp(2rem, 4vw, 2.75rem) clamp(1.5rem, 4vw, 2.75rem)
+    clamp(1.75rem, 3vw, 2.25rem);
+}
+
+.root[data-gate='true'] .heading {
+  font-size: clamp(1.75rem, 5vw, 2.6rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--red);
+  letter-spacing: 0.28em;
 }
 
 .heading {

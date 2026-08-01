@@ -41,6 +41,8 @@ gsap.registerPlugin(ScrollTrigger);
  */
 export default function ScrollRig() {
   const entered = useStore((s) => s.entered);
+  const gateOpen = useStore((s) => s.gateOpen);
+  const captureOpen = useStore((s) => s.captureOpen);
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -118,18 +120,32 @@ export default function ScrollRig() {
     };
   }, []);
 
-  // Hold the page at the top while the preloader owns the screen, then release.
+  /**
+   * The only place the page is locked or released.
+   *
+   * Three things can hold the scroll — the preloader, the door and the capture
+   * panel — and they overlap in time. Deciding here rather than in each overlay
+   * is what stops a later `start()` from quietly undoing an earlier `stop()`:
+   * when the preloader finished it used to release a page the door was still
+   * holding. `overflow: hidden` alone will not do it either, since that permits
+   * programmatic scrolling and programmatic scrolling is exactly how Lenis
+   * moves the page — so the rig has to be stopped, not just the scrollport.
+   */
   useEffect(() => {
+    const held = !entered || gateOpen || captureOpen;
+    document.documentElement.dataset.locked = held ? 'true' : 'false';
+
     const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
     if (!lenis) return;
-    if (entered) {
-      lenis.start();
-      document.documentElement.classList.remove('is-locked');
-    } else {
+    if (held) {
       lenis.stop();
-      document.documentElement.classList.add('is-locked');
+      // Anything the visitor scrolled past before the door resolved is undone,
+      // so the page they are let into starts where it is meant to.
+      if (gateOpen) lenis.scrollTo(0, { immediate: true });
+    } else {
+      lenis.start();
     }
-  }, [entered]);
+  }, [entered, gateOpen, captureOpen]);
 
   return null;
 }

@@ -69,6 +69,18 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/*
+ * Scroll lock while an overlay owns the screen. The smooth-scroll rig handles
+ * this on its own once it exists, but the door can open before it does, so the
+ * native lock is what actually holds on first paint.
+ */
+html[data-locked='true'],
+html[data-locked='true'] body {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background: var(--ink);

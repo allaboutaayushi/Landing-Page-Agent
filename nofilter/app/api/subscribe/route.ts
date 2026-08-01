@@ -66,6 +66,16 @@ export async function POST(request: Request) {
     return json({ error: 'We need your consent before we can message you.' }, 400);
   }
 
+  // Collapse runs of whitespace so a name can't be padded out to look like
+  // separate columns once it lands in a spreadsheet.
+  const name = typeof body.name === 'string' ? body.name.replace(/\s+/g, ' ').trim() : '';
+  if (name.length < 2) {
+    return json({ error: 'We need a name to put to the number.' }, 400);
+  }
+  if (name.length > 80) {
+    return json({ error: 'That name is longer than we can store.' }, 400);
+  }
+
   const phone = normalisePhone(body.phone);
   if (!phone.ok) return json({ error: phone.reason }, 400);
 
@@ -73,6 +83,7 @@ export async function POST(request: Request) {
     typeof v === 'string' ? v.slice(0, max) : '';
 
   const signup: Signup = {
+    name,
     phone: phone.e164,
     timestamp: new Date().toISOString(),
     source: str(body.source, 300) || 'direct',

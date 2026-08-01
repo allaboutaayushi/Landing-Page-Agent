@@ -137,11 +137,26 @@ export const CAPTURE = {
   sub: 'Drop your number. We’ll keep you posted.',
   dial: '+91',
   placeholder: 'Enter your phone number',
+  namePlaceholder: 'Your name',
+  nameLabel: 'Name',
   consent: 'Yes, message me on WhatsApp about NO FILTER. I can opt out anytime.',
   cta: 'KEEP ME IN THE LOOP →',
   pending: 'SENDING…',
   success: 'YOU’RE IN. WE’LL BE IN TOUCH.',
   dismiss: 'Not now',
+} as const;
+
+/**
+ * Wording for the door — the same form, but shown before the page is legible
+ * rather than after a deliberate press. It gets its own copy because a gate has
+ * to say what it wants and why in the first line; the GET IN version can afford
+ * to open with a tease, having already been asked for.
+ */
+export const GATE = {
+  eyebrow: 'THE DOOR',
+  heading: 'NAME ON THE LIST.',
+  lede: 'NO FILTER opens to people, not traffic. Two lines and the room is yours.',
+  cta: 'OPEN THE ROOM →',
 } as const;
 
 export const NAV = [

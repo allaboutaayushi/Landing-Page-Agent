@@ -7,6 +7,8 @@
  * harder to defend if the opt-in is ever challenged.
  */
 export type Signup = {
+  /** Whatever they typed, trimmed and length-capped. Never used as an identifier. */
+  name: string;
   /** E.164, the only format worth storing. */
   phone: string;
   /** ISO 8601, UTC. */
@@ -35,6 +37,7 @@ export interface SignupStore {
 
 export const SIGNUP_COLUMNS: Array<keyof Signup> = [
   'timestamp',
+  'name',
   'phone',
   'consent',
   'source',
