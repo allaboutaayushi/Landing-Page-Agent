@@ -17,7 +17,7 @@ export default function GetIn() {
   const openCapture = useStore((st) => st.openCapture);
 
   return (
-    <section data-act="getIn" id="get-in" className={s.getIn}>
+    <section data-act="getIn" data-skin="pink" id="get-in" className={s.getIn}>
       <div className={s.getInInner}>
         <span className={`micro dim ${s.eyebrow}`}>{GET_IN.eyebrow}</span>
 
@@ -43,7 +43,9 @@ export default function GetIn() {
           <i aria-hidden="true" />
         </button>
 
-        <p className={`micro dim ${s.getInHint}`}>DRAG THE GLASS ASIDE</p>
+        {/* Was "DRAG THE GLASS ASIDE" — that instructed a WebGL lens that no
+            longer exists, so it told visitors to do something impossible. */}
+        <p className={`micro dim ${s.getInHint}`}>NO BOXES. NO CATEGORIES.</p>
       </div>
 
       <footer className={s.footer}>

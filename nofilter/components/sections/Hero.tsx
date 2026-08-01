@@ -13,7 +13,7 @@ export default function Hero() {
   const openCapture = useStore((st) => st.openCapture);
 
   return (
-    <section ref={ref} data-act="hero" id="top" className={s.hero}>
+    <section ref={ref} data-act="hero" data-skin="red" id="top" className={s.hero}>
       {/* The wordmark is the only thing at this size anywhere on the page. */}
       <h1 className={`display wordmark ${s.heroMark}`}>
         <span className="sr-only">NO FILTER</span>

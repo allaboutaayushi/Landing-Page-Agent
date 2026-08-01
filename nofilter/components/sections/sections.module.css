@@ -14,7 +14,7 @@
   min-height: calc(var(--vh, 1vh) * 100);
   display: grid;
   grid-template-rows: 1fr auto;
-  padding: clamp(6rem, 12vh, 9rem) var(--gutter) clamp(1.5rem, 4vh, 2.5rem);
+  padding: clamp(5rem, 9vh, 6.5rem) var(--gutter) clamp(1.25rem, 3vh, 2rem);
 }
 
 .heroMark {
@@ -23,9 +23,15 @@
   justify-self: center;
   text-align: center;
   display: grid;
-  gap: 0;
-  /* Sits over the lens, so it needs to punch through the glass. */
-  mix-blend-mode: difference;
+  gap: 0.06em;
+  line-height: 0.92;
+  /* The difference blend here existed to punch the wordmark through the glass
+     lens. With the canvas gone it would just invert the flat ground, so the
+     mark now carries the logo's own hard offset shadow instead. */
+  color: var(--yellow);
+  text-shadow:
+    0.045em 0.045em 0 var(--shadow),
+    0.09em 0.09em 0 var(--shadow);
 }
 
 .heroMarkLine {
@@ -44,9 +50,9 @@
 }
 
 .heroSub {
-  font-size: 0.92rem;
-  line-height: 1.5;
-  max-width: 42ch;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: 46ch;
 }
 
 .heroCta {
@@ -63,13 +69,13 @@
   display: grid;
   justify-items: center;
   gap: 0.6rem;
-  color: var(--bone-dim);
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
 }
 
 .scrollRule {
   width: 1px;
   height: 44px;
-  background: linear-gradient(to bottom, var(--bone-faint), transparent);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--ink) 26%, transparent), transparent);
   position: relative;
   overflow: hidden;
 }
@@ -80,7 +86,7 @@
   position: absolute;
   inset-inline: 0;
   height: 12px;
-  background: var(--bone);
+  background: var(--ink);
   animation: tick 1.9s var(--ease-inout) infinite;
 }
 
@@ -115,7 +121,7 @@
   align-items: center;
   gap: 0.8rem;
   padding: 0.9rem 1.6rem;
-  border: 1px solid var(--bone-faint);
+  border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: var(--t-micro);
@@ -131,15 +137,17 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--bone);
+  background: var(--ink);
   transform: translate3d(0, 101%, 0);
   transition: transform 0.55s var(--ease-inout);
   z-index: -1;
 }
 
+/* The fill that wipes up is the ink, so the label has to flip to the ground
+   underneath it — otherwise it is ink on ink and the button goes blank. */
 .pill:hover {
-  color: var(--ink);
-  border-color: var(--bone);
+  color: var(--ground);
+  border-color: var(--ink);
 }
 
 .pill:hover::before {
@@ -150,7 +158,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--pop);
   transition: transform 0.45s var(--ease-out);
 }
 
@@ -226,7 +234,7 @@
   grid-column: 2;
   grid-row: 1;
   font-size: var(--t-station);
-  letter-spacing: -0.04em;
+  letter-spacing: 0.005em;
 }
 
 .statementTitle em {
@@ -263,12 +271,12 @@
 
 .closerKick {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 400;
   font-style: normal;
   text-transform: uppercase;
   font-size: clamp(1.4rem, 3.4vw, 3rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
   display: block;
 }
 
@@ -278,10 +286,10 @@
   color: var(--red);
 }
 .closerKicks :global(.line-mask):nth-child(2) .closerKick {
-  color: var(--cyan);
+  color: var(--pink);
 }
 .closerKicks :global(.line-mask):nth-child(3) .closerKick {
-  color: var(--yellow);
+  color: var(--purple);
 }
 
 /* --------------------------------------------------- experience */
@@ -312,25 +320,26 @@
 .stationBlock[data-side='left'] .stationSticky {
   justify-items: start;
   text-align: left;
-  padding-right: 52vw;
+  padding-right: clamp(2rem, 20vw, 22rem);
 }
 
 .stationBlock[data-side='right'] .stationSticky {
   justify-items: end;
   text-align: right;
-  padding-left: 52vw;
+  padding-left: clamp(2rem, 20vw, 22rem);
 }
 
 .stationIndex {
   font-size: clamp(0.85rem, 1.1vw, 1rem);
   letter-spacing: 0.1em;
-  color: var(--accent);
+  /* The panel is the accent now, so the counter has to fight it, not match it. */
+  color: var(--pop);
   font-family: var(--font-mono);
   font-weight: 400;
 }
 
 .stationTitle {
-  font-size: var(--t-station);
+  font-size: var(--t-display);
   text-wrap: balance;
 }
 
@@ -339,7 +348,7 @@
   max-width: 24ch;
   font-size: 1.02rem;
   line-height: 1.4;
-  color: var(--bone-dim);
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
 }
 
 .indexReadout {
@@ -372,7 +381,7 @@
 .indexRule {
   width: 34px;
   height: 1px;
-  background: var(--bone-faint);
+  background: color-mix(in srgb, var(--ink) 26%, transparent);
 }
 
 /* --------------------------------------------------- what to expect */
