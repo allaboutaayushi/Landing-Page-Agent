@@ -1,12 +1,13 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Lightformer, AdaptiveDpr, Preload } from '@react-three/drei';
 import * as THREE from 'three';
-import { rig } from '@/lib/rig';
+import { rig, damp } from '@/lib/rig';
 import { useStore } from '@/lib/store';
 import { GROUND, PALETTE } from '@/lib/palette';
+import { ACTS } from './path';
 import CameraRig from './CameraRig';
 import Lens from './Lens';
 import Shards from './Shards';
@@ -31,6 +32,45 @@ function useQuality(): 'high' | 'low' {
  * Bridges the store's reveal flag into the per-frame rig, and eases it rather
  * than snapping so the shatter has a ramp to ride.
  */
+/**
+ * Drives the scene's ground colour from scroll position.
+ *
+ * The canvas is one continuous surface behind the whole page, so a single
+ * clear colour would paint the hero and the tunnel the same. The hero opens on
+ * the brand red — the logo's own ground — and eases to the dark green-black by
+ * the time the tunnel starts, because the stations read as lit rings against a
+ * dark interior and lose all depth on a bright field.
+ *
+ * Damped rather than snapped, so a fast scroll doesn't strobe.
+ */
+const HERO_GROUND = new THREE.Color(PALETTE.red);
+const TUNNEL_GROUND = new THREE.Color(GROUND.shadow);
+
+function GroundColour() {
+  useFrame((state, delta) => {
+    const [, heroEnd] = ACTS.hero;
+    // Fully red through the hero, fully dark a little after it ends, so the
+    // change lands during the scroll rather than at a section boundary.
+    const t = Math.min(Math.max((rig.progress - heroEnd * 0.55) / (heroEnd * 0.9), 0), 1);
+    const target = HERO_GROUND.clone().lerp(TUNNEL_GROUND, t);
+
+    const scene = state.scene;
+    if (!(scene.background instanceof THREE.Color)) {
+      scene.background = target.clone();
+      return;
+    }
+
+    const dt = Math.min(delta, 1 / 20);
+    scene.background.setRGB(
+      damp(scene.background.r, target.r, 6, dt),
+      damp(scene.background.g, target.g, 6, dt),
+      damp(scene.background.b, target.b, 6, dt),
+    );
+    if (scene.fog instanceof THREE.Fog) scene.fog.color.copy(scene.background);
+  });
+  return null;
+}
+
 function RevealBridge() {
   const shattered = useStore((s) => s.shattered);
   useEffect(() => {
@@ -80,12 +120,14 @@ export default function Scene() {
         onCreated={({ gl, scene }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.05;
-          scene.background = new THREE.Color(GROUND.ink);
+          // Opens on the brand red; GroundColour takes it from here.
+          scene.background = new THREE.Color(PALETTE.red);
           // Fog eats the far end of the tunnel so stations arrive out of black.
-          scene.fog = new THREE.Fog(GROUND.ink, 18, 88);
+          scene.fog = new THREE.Fog(PALETTE.red, 18, 88);
         }}
       >
         <RevealBridge />
+        <GroundColour />
         <CameraRig />
 
         <ambientLight intensity={0.35} />
