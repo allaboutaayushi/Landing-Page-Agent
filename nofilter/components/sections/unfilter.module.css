@@ -1,0 +1,96 @@
+/*
+ * The unfilter lines.
+ *
+ * Scattered left, centre and right rather than stacked, so the block reads as
+ * three separate thoughts drifting in the same space instead of a list.
+ */
+
+.wrap {
+  display: grid;
+  gap: clamp(2.5rem, 7vh, 5rem);
+  padding-block: clamp(3rem, 9vh, 7rem);
+  /* Room either side for a line to bolt into without clipping. */
+  padding-inline: clamp(1rem, 5vw, 5rem);
+}
+
+.line {
+  font-size: clamp(2rem, 6.2vw, 5.5rem);
+  line-height: 0.95;
+  margin: 0;
+  text-wrap: balance;
+  /* The words are the target, not the full-width block — otherwise a pointer
+     anywhere on the row would set the line running. */
+  width: fit-content;
+}
+
+.line[data-place='left'] {
+  justify-self: start;
+  text-align: left;
+}
+
+.line[data-place='centre'] {
+  justify-self: center;
+  text-align: center;
+}
+
+.line[data-place='right'] {
+  justify-self: end;
+  text-align: right;
+}
+
+/* Float and flee are separate elements so the two transforms never fight:
+   the drift keeps running while a line is being pushed. */
+.float {
+  display: inline-block;
+  animation: drift 13s ease-in-out infinite;
+  will-change: transform;
+}
+
+.flee {
+  display: inline-block;
+  translate: var(--fx, 0) var(--fy, 0);
+  will-change: transform;
+}
+
+/* Deliberately not a loop back through the same path — each corner is a
+   different distance, so the motion never looks like it is on rails. */
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  22% {
+    transform: translate3d(2.5vw, -1.4vh, 0) rotate(-1.4deg);
+  }
+  46% {
+    transform: translate3d(-1.8vw, 1.8vh, 0) rotate(1.1deg);
+  }
+  71% {
+    transform: translate3d(1.2vw, 2.4vh, 0) rotate(0.6deg);
+  }
+  88% {
+    transform: translate3d(-2.2vw, -0.9vh, 0) rotate(-0.8deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+.tagline {
+  justify-self: center;
+  text-align: center;
+  max-width: 26ch;
+  margin: clamp(1rem, 3vh, 2rem) 0 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.4rem);
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float {
+    animation: none;
+  }
+  .flee {
+    translate: none;
+  }
+}
