@@ -1,0 +1,208 @@
+/*
+ * The stamp heading.
+ *
+ * One line, filling the gutter. The size is driven from vw rather than a clamp
+ * on a fixed scale, because the whole point is that the line spans the page —
+ * a fixed maximum would leave it stranded short on a wide screen.
+ */
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 3rem);
+}
+
+.stampWrap {
+  position: relative;
+  /* The tilt sits on the wrapper so the box, the type and the splatter all
+     lean as one object. Rotating them separately reads as three things that
+     happen to be near each other. */
+  transform: rotate(-5.5deg);
+  transform-origin: left center;
+  padding: clamp(0.4rem, 1.4vw, 1.1rem) clamp(0.6rem, 1.8vw, 1.4rem);
+}
+
+/* --- the press ---------------------------------------------------------- */
+
+/*
+ * Down from above, overshooting and settling — a rubber stamp bounces off the
+ * page rather than easing onto it, so the curve overshoots past 1 before it
+ * comes back.
+ */
+.stampWrap {
+  opacity: 0;
+  transform: rotate(-5.5deg) translateY(-38px) scale(1.5);
+  transition:
+    opacity 0.28s ease-out,
+    transform 0.62s cubic-bezier(0.2, 1.5, 0.35, 1);
+}
+
+.root[data-pressed='true'] .stampWrap {
+  opacity: 1;
+  transform: rotate(-5.5deg) translateY(0) scale(1);
+}
+
+/* --- the type ----------------------------------------------------------- */
+
+.head {
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.line {
+  display: block;
+  font-family: var(--font-stamp);
+  font-weight: 400;
+  text-transform: uppercase;
+  /* One line, always — the request was a single line, and a condensed face at
+     this width has no business wrapping. */
+  white-space: nowrap;
+  font-size: clamp(1.9rem, 8.1vw, 11rem);
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+}
+
+.letter {
+  display: inline-block;
+  /* Kick away from the pointer. Damped in JS; the transition only smooths the
+     per-letter stagger on the way in. */
+  translate: var(--lx, 0) var(--ly, 0);
+  rotate: var(--lr, 0deg);
+  will-change: transform;
+}
+
+/* --- the box ------------------------------------------------------------ */
+
+.box {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: currentColor;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/*
+ * Drawn rather than faded in. The dash length is in the same user units as the
+ * viewBox, so one perimeter is 400 — the rect is 100 wide by 100 tall and
+ * `non-scaling-stroke` keeps the weight even once it is squashed to the real
+ * aspect ratio.
+ */
+.boxRect {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.24s;
+}
+
+.root[data-pressed='true'] .boxRect {
+  stroke-dashoffset: 0;
+}
+
+/* --- the splatter ------------------------------------------------------- */
+
+/*
+ * Ink thrown off on impact. Each fleck leaves on its own angle, derived from
+ * its index, so the burst is uneven — a symmetrical spray reads as a graphic
+ * rather than as a splash.
+ */
+.splatter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.splatter i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(4px + (var(--i) * 1.3px));
+  height: calc(4px + (var(--i) * 1.3px));
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+}
+
+.root[data-pressed='true'] .splatter i {
+  animation: fleck 0.72s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.16s + (var(--i) * 0.012s));
+}
+
+@keyframes fleck {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(
+        calc(-50% + (cos(calc(var(--i) * 51deg)) * 200px)),
+        calc(-50% + (sin(calc(var(--i) * 51deg)) * 90px))
+      )
+      scale(1);
+  }
+}
+
+/* --- the badge ---------------------------------------------------------- */
+
+.badge {
+  flex: none;
+  width: clamp(84px, 11vw, 150px);
+  height: auto;
+  opacity: 0.9;
+  animation: badgeSpin 26s linear infinite;
+}
+
+.badgeText {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.16em;
+  fill: currentColor;
+  text-transform: uppercase;
+}
+
+@keyframes badgeSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 860px) {
+  .root {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .stampWrap {
+    transform: rotate(-3.5deg) translateY(-38px) scale(1.5);
+  }
+  .root[data-pressed='true'] .stampWrap {
+    transform: rotate(-3.5deg) translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stampWrap,
+  .root[data-pressed='true'] .stampWrap {
+    opacity: 1;
+    transform: rotate(-5.5deg);
+    transition: none;
+  }
+  .boxRect {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  .splatter,
+  .badge {
+    animation: none;
+  }
+  .splatter i {
+    display: none;
+  }
+  .letter {
+    translate: none;
+    rotate: none;
+  }
+}
