@@ -171,12 +171,21 @@ export default function Shards({ quality }: { quality: 'high' | 'low' }) {
         metalness={0}
         // Iridescence gives the dispersion read of real glass without paying
         // for a transmission render pass on 46 instances.
+        // Pushed up so the shards actually catch the light rather than
+        // reading as flat grey chips. Wider iridescence range means each one
+        // sits at a different point in the film, so a drift through the field
+        // shows colour moving across it instead of every piece flashing at
+        // once. Sheen is what keeps them visible on the light grounds, where
+        // a purely specular material has nothing to reflect.
         iridescence={1}
-        iridescenceIOR={1.7}
-        iridescenceThicknessRange={[100, 640]}
+        iridescenceIOR={2.1}
+        iridescenceThicknessRange={[80, 1100]}
         clearcoat={1}
-        clearcoatRoughness={0.05}
-        envMapIntensity={2.2}
+        clearcoatRoughness={0.02}
+        sheen={1}
+        sheenRoughness={0.25}
+        specularIntensity={1}
+        envMapIntensity={3.4}
         side={THREE.DoubleSide}
         depthWrite={false}
       />
