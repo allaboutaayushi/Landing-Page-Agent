@@ -21,6 +21,20 @@
   font-display: swap;
   font-style: normal;
 }
+/*
+ * The stamp face.
+ *
+ * A heavy condensed grotesque for the rubber-stamp headings — the display
+ * face is rounded and friendly, which is the opposite of what a stamp reads
+ * as. Stands in for a licensed stencil face; swapping it is a file drop.
+ */
+@font-face {
+  font-family: 'NF Stamp';
+  src: url('/fonts/nf-stamp.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
 @font-face {
   font-family: 'NF Text';
   src: url('/fonts/nf-text.woff2') format('woff2');
@@ -71,6 +85,7 @@
 
   --font-display: 'NF Display', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
   --font-text: 'NF Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-stamp: 'NF Stamp', 'Haettenschweiler', 'Arial Narrow', 'Impact', sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Fluid scale. The reference keeps only two loud sizes — a page-wide
@@ -383,4 +398,32 @@ img {
   text-shadow:
     0 0 0.5em var(--ground),
     0 0 1.2em var(--ground);
+}
+
+
+/*
+ * Rubber-stamp headings.
+ *
+ * Condensed caps set tight and knocked off the horizontal. The tilt is on the
+ * block rather than each line, so the whole stamp leans as one piece — per
+ * line it reads as a mistake instead of a mark. `transform-origin: left
+ * center` keeps the left edge anchored where the layout put it, so the tilt
+ * cannot push the heading out of its own gutter.
+ */
+.stamp {
+  font-family: var(--font-stamp);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.88;
+  transform: rotate(-6.5deg);
+  transform-origin: left center;
+}
+
+@media (max-width: 720px) {
+  /* Less lean on a narrow screen — the same angle eats far more width when
+     the line is nearly as wide as the viewport. */
+  .stamp {
+    transform: rotate(-4deg);
+  }
 }

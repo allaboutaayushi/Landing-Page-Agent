@@ -109,7 +109,10 @@
 }
 
 .sectionHead {
-  font-size: var(--t-section);
+  /* Bigger than the standard section head — the stamp is the loudest thing
+     in this section and the condensed face carries the extra size without
+     needing more measure. */
+  font-size: clamp(2.6rem, 7.6vw, 7.5rem);
   display: grid;
   /* em, so the measure tracks the heading's own size at every breakpoint. */
   max-width: 9em;

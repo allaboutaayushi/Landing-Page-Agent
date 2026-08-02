@@ -15,7 +15,7 @@ export default function WhatIs() {
     <section data-act="whatIs" data-skin="red" id="what-is" className={s.whatIs}>
       <header className={s.whatIsHead}>
         <span className={`micro dim ${s.eyebrow}`}>01 — THE IDEA</span>
-        <h2 className={`display ${s.sectionHead}`}>
+        <h2 className={`display stamp ${s.sectionHead}`}>
           <span className="sr-only">{WHAT_IS.heading}</span>
           <span aria-hidden="true" className={s.headLine}>
             <Chars text="WHAT IS" />
