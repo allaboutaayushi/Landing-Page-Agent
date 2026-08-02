@@ -67,12 +67,49 @@ more.
 
 ## Phone capture
 
-`POST /api/subscribe` validates a number, then appends a row to your store.
+`POST /api/subscribe` validates a name and number, then appends a row to your
+store.
+
+**The door.** The capture panel opens itself once per visitor and holds the
+page until it is answered. The site stays on screen behind a heavy blur —
+legible as motion and colour, not as content — so there is something to want
+on the way in. Passing it writes `nf.gate.passed` to `localStorage`, so a
+returning visitor is never asked twice. Pressing GET IN opens the same form in
+its dismissible posture.
+
+Every word of the page is still server-rendered underneath the door: it is a
+client overlay, so crawlers, reader modes and no-JS visitors are unaffected.
+That cuts both ways — a client gate is a business decision, not a security
+boundary, and anyone with devtools can step around it. It is there to ask, not
+to enforce.
+
+To take the door down and go back to GET IN only, drop the `resolveGate()`
+call in `components/Capture.tsx`.
 
 **Storage.** Google Sheets when configured, otherwise a local CSV. The CSV is
 refused in production unless `CAPTURE_ALLOW_CSV=true`, because serverless
 filesystems are wiped on redeploy and losing signups quietly is worse than
 failing loudly at boot.
+
+The choice is automatic: set the three Google variables and rows go to the
+sheet; leave them unset and rows go to the CSV. Nothing else changes.
+
+**Collecting to a file on your own machine.** While the site runs locally,
+`CAPTURE_CSV_PATH` decides where rows land — point it anywhere you like:
+
+```bash
+CAPTURE_CSV_PATH="$HOME/Desktop/nofilter-signups.csv" npm run dev
+```
+
+It defaults to `data/signups.csv` in the project. The file is UTF-8 CSV with a
+header row, so Excel and Numbers both open it on a double-click, and any cell
+beginning `=`, `+`, `-` or `@` is prefixed with an apostrophe so a name can
+never be evaluated as a formula. Excel holds the file open with a lock while
+it is on screen — leave it closed, or copy it first, if the server is live.
+
+This only collects while the site is running on your machine. A deployed site
+writes on the server it is deployed to and cannot reach your Mac, which is what
+the Sheets backend is for.
 
 To use Sheets: create a service account, enable the Google Sheets API, and
 **share the spreadsheet with the service account's email as an Editor** — the
@@ -87,6 +124,7 @@ Credentials are server-only. Nothing is exposed as `NEXT_PUBLIC_*`, and
 | Column | Purpose |
 | --- | --- |
 | `timestamp` | ISO 8601 UTC |
+| `name` | Whitespace-collapsed, 2–80 characters |
 | `phone` | E.164, normalised server-side |
 | `consent` | Only ever `TRUE`; the request is rejected otherwise |
 | `source` | Landing query string, so UTMs survive |
@@ -117,9 +155,10 @@ learns nothing about which check caught it.
 Every word is in the server-rendered HTML — the canvas adds the ride, never the
 meaning. The WebGL layer is `aria-hidden`; station photographs carry their alt
 text in the type layer. `prefers-reduced-motion` disables smooth scrolling, the
-custom cursor and all reveal animations. The capture panel traps focus, closes
-on Escape, and the consent checkbox is keyboard-operable with a visible focus
-ring. Quality (sample counts, particle counts, DPR) steps down automatically on
+custom cursor and all reveal animations. The capture panel traps focus and the
+consent checkbox is keyboard-operable with a visible focus ring. Escape closes
+the panel in its dismissible posture; as the door it deliberately does not,
+since a gate with a keyboard bypass is not a gate. Quality (sample counts, particle counts, DPR) steps down automatically on
 coarse pointers, narrow viewports, and low core/memory devices.
 
 ## Deploying

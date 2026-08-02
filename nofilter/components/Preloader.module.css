@@ -15,7 +15,7 @@
   left: 0;
   right: 0;
   height: 50.5%;
-  background: var(--ink);
+  background: var(--red);
   transition: transform 1.05s var(--ease-inout);
   will-change: transform;
 }

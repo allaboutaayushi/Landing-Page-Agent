@@ -1,0 +1,49 @@
+/*
+ * Decorative marks.
+ *
+ * The field sits behind the type at z-index 0 and never takes pointer events,
+ * so nothing here can intercept a click meant for the copy above it.
+ */
+.field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mark {
+  position: absolute;
+  height: auto;
+  opacity: 0.9;
+  animation: twinkle 4.5s var(--ease-inout) infinite;
+}
+
+.cream {
+  color: var(--cream);
+}
+.teal {
+  color: var(--teal);
+}
+.yellow {
+  color: var(--yellow);
+}
+
+/* A slow pulse rather than a blink — the mark should breathe, not flash. */
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(0.82) rotate(12deg);
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    animation: none;
+  }
+}

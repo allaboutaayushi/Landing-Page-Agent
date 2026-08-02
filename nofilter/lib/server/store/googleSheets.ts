@@ -60,7 +60,10 @@ export function createGoogleSheetsStore(): SignupStore | null {
         return typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : value;
       });
 
-      const range = encodeURIComponent(`${tab}!A:J`);
+      // Derived from the column list rather than written out, so adding a
+      // field to Signup can never silently truncate the append range.
+      const lastCol = String.fromCharCode(64 + SIGNUP_COLUMNS.length);
+      const range = encodeURIComponent(`${tab}!A:${lastCol}`);
       const url =
         `https://sheets.googleapis.com/v4/spreadsheets/${creds.sheetId}` +
         `/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;

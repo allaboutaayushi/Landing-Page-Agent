@@ -1,3 +1,12 @@
+/*
+ * The nav crosses all nine colourways as you scroll.
+ *
+ * It used to blend in difference mode against a page that was always near
+ * black. Against flat brand colour that inverts red into cyan and yellow into
+ * blue — both off palette — so it now carries its own shadow bar and stays
+ * one fixed pairing the whole way down. The deck sets black bars over colour
+ * the same way.
+ */
 .root {
   position: fixed;
   top: 0;
@@ -8,8 +17,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: clamp(1rem, 2vw, 1.75rem) var(--gutter);
-  mix-blend-mode: difference;
+  padding: clamp(0.85rem, 1.6vw, 1.25rem) var(--gutter);
+  background: var(--shadow);
+  color: var(--cream);
   transition: transform 0.6s var(--ease-inout), opacity 0.5s var(--ease-out);
   will-change: transform;
 }
@@ -51,7 +61,7 @@
 
 .link {
   position: relative;
-  color: var(--bone-dim);
+  color: color-mix(in srgb, var(--cream) 66%, transparent);
   transition: color 0.3s var(--ease-out);
   padding-block: 0.25rem;
 }
@@ -71,7 +81,7 @@
 }
 
 .link:hover {
-  color: var(--bone);
+  color: var(--cream);
 }
 
 .link:hover::after {
@@ -80,10 +90,10 @@
 }
 
 .cta {
-  border: 1px solid var(--bone-faint);
+  border: 1px solid color-mix(in srgb, var(--cream) 34%, transparent);
   padding: 0.55rem 1.05rem;
   border-radius: 999px;
-  color: var(--bone);
+  color: var(--cream);
   transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out),
     border-color 0.4s var(--ease-out);
 }
@@ -91,7 +101,7 @@
 .cta:hover {
   background: var(--bone);
   color: var(--ink);
-  border-color: var(--bone);
+  border-color: var(--cream);
 }
 
 @media (max-width: 720px) {

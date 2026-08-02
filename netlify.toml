@@ -1,0 +1,46 @@
+# Netlify build configuration.
+#
+# The Next app is not at the repo root — it lives in nofilter/ — which is why
+# importing this repo without this file fails: Netlify looks for a framework at
+# the root, finds none, and stops. `base` points it at the right directory and
+# everything else is resolved relative to that.
+
+[build]
+  base = "nofilter"
+  # Netlify registers forms by scanning the PUBLISH directory for form markup
+  # at deploy time. Files under public/ are served by the Next runtime at
+  # request time and are never copied into .next, so the form definition has
+  # to be placed into the publish directory explicitly — without this copy the
+  # scan finds nothing and the "signups" form never appears in the dashboard.
+  command = "npm run build && cp public/__forms.html .next/__forms.html"
+  publish = ".next"
+
+[build.environment]
+  # Next 16 needs a modern runtime; Netlify's default is older than that.
+  NODE_VERSION = "22"
+
+# Everything the SUBSCRIBE ROUTE needs must be set in the Netlify UI, under
+# Site configuration → Environment variables — NOT here.
+#
+# Values in this file are build-time only. They are absent from the serverless
+# function at runtime, so setting the capture variables here made getStore()
+# throw inside the function and the door answered "We couldn't save that."
+#
+# Set these in the UI instead:
+#
+#   For real, durable capture (recommended):
+#     GOOGLE_SHEETS_ID
+#     GOOGLE_SERVICE_ACCOUNT_EMAIL
+#     GOOGLE_PRIVATE_KEY
+#   The store picks Sheets automatically once all three are present.
+#
+#   For a throwaway preview only:
+#     CAPTURE_ALLOW_CSV = true
+#     CAPTURE_CSV_PATH  = /tmp/nf-signups.csv
+#   /tmp is the only writable path on the platform and is wiped between
+#   invocations, so rows captured this way WILL be lost. It proves the form
+#   works; it does not keep anything.
+
+# Gives the API route a serverless function and handles Next's routing.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

@@ -13,7 +13,13 @@ type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
 
 const WINDOW_MS = 60 * 60 * 1000;
-const MAX_PER_WINDOW = Number(process.env.CAPTURE_RATE_LIMIT ?? 6);
+/*
+ * Six was tuned for a form nobody had to pass to see the site. As a door, a
+ * visitor who hits a failing backend burns the whole allowance retrying and
+ * then meets 429 on top of the original error, so the limit has to be far
+ * above anything a real person reaches in an hour while still capping a bot.
+ */
+const MAX_PER_WINDOW = Number(process.env.CAPTURE_RATE_LIMIT ?? 250);
 
 /** Evict expired buckets so the map cannot grow without bound. */
 function sweep(now: number) {

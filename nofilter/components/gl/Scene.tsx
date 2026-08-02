@@ -6,7 +6,7 @@ import { Environment, Lightformer, AdaptiveDpr, Preload } from '@react-three/dre
 import * as THREE from 'three';
 import { rig } from '@/lib/rig';
 import { useStore } from '@/lib/store';
-import { GROUND } from '@/lib/palette';
+import { GROUND, PALETTE } from '@/lib/palette';
 import CameraRig from './CameraRig';
 import Lens from './Lens';
 import Shards from './Shards';
@@ -98,9 +98,9 @@ export default function Scene() {
           <Environment resolution={quality === 'high' ? 256 : 128}>
             <color attach="background" args={[GROUND.ink]} />
             <Lightformer intensity={2.6} position={[0, 4, -6]} scale={[10, 6, 1]} color="#ffffff" />
-            <Lightformer intensity={1.6} position={[-6, 1, -2]} scale={[3, 8, 1]} color="#00bbd2" />
-            <Lightformer intensity={1.8} position={[6, -1, -2]} scale={[3, 8, 1]} color="#e6182a" />
-            <Lightformer intensity={1.1} position={[0, -5, 2]} scale={[10, 3, 1]} color="#ffd23f" />
+            <Lightformer intensity={1.6} position={[-6, 1, -2]} scale={[3, 8, 1]} color={PALETTE.teal} />
+            <Lightformer intensity={1.8} position={[6, -1, -2]} scale={[3, 8, 1]} color={PALETTE.red} />
+            <Lightformer intensity={1.1} position={[0, -5, 2]} scale={[10, 3, 1]} color={PALETTE.yellow} />
             <Lightformer
               form="ring"
               intensity={2.2}

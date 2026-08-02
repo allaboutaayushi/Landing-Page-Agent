@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Form definitions</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <!--
+      Netlify Forms detection.
+
+      Netlify scans the *built output* for form markup at deploy time and
+      registers whatever it finds. A Next.js form rendered by React never
+      appears in that scan, so the form has to be declared once, statically,
+      here — this file is served verbatim from /public and is the only reason
+      the "signups" form exists in the Netlify dashboard.
+
+      Nobody visits this page. The API route posts to it server-side after the
+      number has been validated and normalised, which keeps validation on the
+      server rather than trusting the browser.
+
+      The field list must match SIGNUP_COLUMNS in lib/server/store/types.ts —
+      Netlify only stores fields it was told about, so an unlisted field is
+      dropped silently.
+    -->
+    <form name="signups" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="signups" />
+      <input type="text" name="bot-field" />
+      <input type="text" name="timestamp" />
+      <input type="text" name="name" />
+      <input type="text" name="phone" />
+      <input type="text" name="consent" />
+      <input type="text" name="source" />
+      <input type="text" name="referrer" />
+      <input type="text" name="country" />
+      <input type="text" name="consentVersion" />
+      <input type="text" name="consentText" />
+      <input type="text" name="ipHash" />
+      <input type="text" name="userAgent" />
+    </form>
+  </body>
+</html>

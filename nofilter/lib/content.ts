@@ -23,7 +23,7 @@ export const WHAT_IS = {
     },
     {
       key: 'CULTURE',
-      accent: 'cyan' as PaletteKey,
+      accent: 'teal' as PaletteKey,
       line: 'The things shaping what people are watching, wearing, listening to and talking about.',
     },
     {
@@ -33,7 +33,7 @@ export const WHAT_IS = {
     },
     {
       key: 'EXPERIENCES',
-      accent: 'magenta' as PaletteKey,
+      accent: 'pink' as PaletteKey,
       line: 'Things you discover by actually being there.',
     },
     {
@@ -75,7 +75,7 @@ export const STATIONS: Station[] = [
     index: '02',
     title: 'POP CULTURE',
     line: 'Everything you’re into, finally in the same room.',
-    accent: 'cyan',
+    accent: 'teal',
     image: '/images/experience/02-pop-culture.jpg',
     alt: 'Pop culture installations and references across the NO FILTER floor.',
   },
@@ -91,7 +91,7 @@ export const STATIONS: Station[] = [
     index: '04',
     title: 'CREATORS',
     line: 'The people behind what’s next.',
-    accent: 'magenta',
+    accent: 'pink',
     image: '/images/experience/04-creators.jpg',
     alt: 'Creators shooting and performing at NO FILTER.',
   },
@@ -117,9 +117,9 @@ export const EXPECT = {
   heading: 'WHAT TO EXPECT',
   items: [
     { key: 'MUSIC', line: 'Live artists, DJs and sounds across the experience.', accent: 'red' as PaletteKey },
-    { key: 'CULTURE', line: 'Creators, fashion, art and everything influencing what’s next.', accent: 'cyan' as PaletteKey },
+    { key: 'CULTURE', line: 'Creators, fashion, art and everything influencing what’s next.', accent: 'teal' as PaletteKey },
     { key: 'FOOD + DRINKS', line: 'A reason to stay between everything else happening.', accent: 'yellow' as PaletteKey },
-    { key: 'EXPERIENCES', line: 'Interactive moments, discoveries and things you won’t get from a screen.', accent: 'magenta' as PaletteKey },
+    { key: 'EXPERIENCES', line: 'Interactive moments, discoveries and things you won’t get from a screen.', accent: 'pink' as PaletteKey },
     { key: 'PEOPLE', line: 'A crowd that doesn’t belong to just one scene.', accent: 'green' as PaletteKey },
   ],
 } as const;
@@ -137,11 +137,26 @@ export const CAPTURE = {
   sub: 'Drop your number. We’ll keep you posted.',
   dial: '+91',
   placeholder: 'Enter your phone number',
+  namePlaceholder: 'Your name',
+  nameLabel: 'Name',
   consent: 'Yes, message me on WhatsApp about NO FILTER. I can opt out anytime.',
   cta: 'KEEP ME IN THE LOOP →',
   pending: 'SENDING…',
   success: 'YOU’RE IN. WE’LL BE IN TOUCH.',
   dismiss: 'Not now',
+} as const;
+
+/**
+ * Wording for the door — the same form, but shown before the page is legible
+ * rather than after a deliberate press. It gets its own copy because a gate has
+ * to say what it wants and why in the first line; the GET IN version can afford
+ * to open with a tease, having already been asked for.
+ */
+export const GATE = {
+  eyebrow: 'THE DOOR',
+  heading: 'NAME ON THE LIST.',
+  lede: 'NO FILTER opens to people, not traffic. Two lines and the room is yours.',
+  cta: 'OPEN THE ROOM →',
 } as const;
 
 export const NAV = [

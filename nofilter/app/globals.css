@@ -1,50 +1,82 @@
 /* ==========================================================================
    NO FILTER — design system
-   Ground stays near-monochrome; brand colour is punctuation, never wallpaper.
+
+   Colour is the wallpaper, not the punctuation. Every value below is sampled
+   straight out of the logo artwork in the brand deck rather than eyeballed —
+   see lib/palette.ts for the sampling notes and the full nine-hue set.
    ========================================================================== */
 
-/* Drop brand font files into /public/fonts and these pick up automatically.
-   Until then the stack falls back to a tight grotesque already on the system. */
+/*
+ * Brand faces.
+ *
+ * `nf-display` stands in for NOVO and `nf-text` for Qanelas until the licensed
+ * files exist. Swapping them is a file drop — same names, same family names,
+ * no code change — but the real faces have different metrics, so re-check the
+ * hero and the statement list once they land.
+ */
 @font-face {
   font-family: 'NF Display';
   src: url('/fonts/nf-display.woff2') format('woff2');
-  font-weight: 100 900;
+  font-weight: 400 900;
   font-display: swap;
   font-style: normal;
 }
 @font-face {
   font-family: 'NF Text';
   src: url('/fonts/nf-text.woff2') format('woff2');
-  font-weight: 100 900;
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'NF Text';
+  src: url('/fonts/nf-text-700.woff2') format('woff2');
+  font-weight: 700;
   font-display: swap;
   font-style: normal;
 }
 
 :root {
-  --ink: #0b0b0c;
-  --bone: #f4f1ea;
-  --bone-dim: rgba(244, 241, 234, 0.52);
-  --bone-faint: rgba(244, 241, 234, 0.18);
-  --hairline: rgba(244, 241, 234, 0.14);
+  /* --- the four that carry the brand ------------------------------------ */
+  --red: #ed1c25;
+  --yellow: #f5bd18;
+  --cream: #f4e7d4;
+  /* Not pure black. The logo's drop shadow is a dark green-black, and that
+     slight cast is what stops the whole page reading as clip art. */
+  --shadow: #152b18;
+  --white: #fbfcfc;
 
-  --red: #e6182a;
-  --green: #00a650;
-  --magenta: #e0207a;
-  --yellow: #ffd23f;
-  --dark-blue: #1a3794;
-  --purple: #912b90;
-  --cyan: #00bbd2;
-  --orange: #f7921e;
+  /* --- the five colourways ---------------------------------------------- */
+  --teal: #53c4c5;
+  --pink: #e13894;
+  --green: #02b04b;
+  --purple: #602a7d;
+  --orange: #f26622;
 
-  --font-display: 'NF Display', 'Helvetica Neue', Helvetica, 'Arial Narrow',
-    Arial, sans-serif;
+  /* --- roles ------------------------------------------------------------ */
+  /* Ground and ink are swapped per section by [data-skin]; these are defaults. */
+  --ground: var(--red);
+  --ink: var(--shadow);
+  --on-ground: var(--cream);
+  --hairline: rgba(21, 43, 24, 0.22);
+  /* A hue that fights the current ground, for dots, rules and accents. */
+  --pop: var(--yellow);
+
+  /* Kept so older rules resolve while the reskin lands. */
+  --bone: var(--cream);
+  --bone-dim: rgba(244, 231, 212, 0.66);
+  --bone-faint: rgba(244, 231, 212, 0.28);
+  --magenta: var(--pink);
+  --cyan: var(--teal);
+
+  --font-display: 'NF Display', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
   --font-text: 'NF Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Fluid scale. The reference keeps only two loud sizes — a page-wide
      wordmark and a section head — everything else is quiet. */
-  --t-wordmark: clamp(4.5rem, 19vw, 21rem);
-  --t-display: clamp(2.75rem, 8.2vw, 8.5rem);
+  --t-wordmark: clamp(3.25rem, 13vw, 14rem);
+  --t-display: clamp(2.4rem, 7vw, 7rem);
   --t-section: clamp(2rem, 5.4vw, 5.25rem);
   --t-station: clamp(1.75rem, 4.6vw, 4.25rem);
   --t-lede: clamp(1.15rem, 1.9vw, 1.9rem);
@@ -65,14 +97,69 @@
 }
 
 html {
-  background: var(--ink);
+  background: var(--shadow);
   -webkit-text-size-adjust: 100%;
+}
+
+/*
+ * Colourways.
+ *
+ * Put [data-skin] on a section and it repaints the whole block — ground, ink
+ * and hairline together, so type contrast can never drift out of step with the
+ * background it sits on. Everything downstream reads var(--ground)/var(--ink)
+ * and never names a hue directly.
+ */
+/*
+ * Skins set ink, accent and hairline — not a painted ground. The WebGL tunnel
+ * is the page's background, so a section that filled its own would hide it.
+ * Sections that genuinely need a ground opt in with [data-solid].
+ */
+[data-skin] {
+  color: var(--ink);
+}
+
+[data-skin][data-solid] {
+  background: var(--ground);
+}
+[data-skin='red']    { --ground: var(--red);    --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }
+[data-skin='yellow'] { --ground: var(--yellow); --ink: var(--shadow); --hairline: rgba(21,43,24,0.28);  --pop: var(--red); }
+[data-skin='teal']   { --ground: var(--teal);   --ink: var(--shadow); --hairline: rgba(21,43,24,0.28);  --pop: var(--pink); }
+[data-skin='pink']   { --ground: var(--pink);   --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }
+[data-skin='green']  { --ground: var(--green);  --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }
+[data-skin='purple'] { --ground: var(--purple); --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }
+[data-skin='orange'] { --ground: var(--orange); --ink: var(--shadow); --hairline: rgba(21,43,24,0.28);  --pop: var(--purple); }
+[data-skin='cream']  { --ground: var(--cream);  --ink: var(--shadow); --hairline: rgba(21,43,24,0.22);  --pop: var(--red); }
+[data-skin='shadow'] { --ground: var(--shadow); --ink: var(--cream);  --hairline: rgba(244,231,212,0.24);  --pop: var(--yellow); }
+
+/*
+ * The sticker treatment: hard offset shadow, no blur, no gradient.
+ * One shared rule so every headline casts the same shadow as the logo does.
+ */
+.sticker {
+  color: var(--sticker-face, var(--yellow));
+  text-shadow:
+    0.055em 0.055em 0 var(--shadow),
+    0.11em 0.11em 0 var(--shadow);
+  -webkit-text-stroke: 0.012em var(--shadow);
+  paint-order: stroke fill;
+}
+
+/*
+ * Scroll lock while an overlay owns the screen. The smooth-scroll rig handles
+ * this on its own once it exists, but the door can open before it does, so the
+ * native lock is what actually holds on first paint.
+ */
+html[data-locked='true'],
+html[data-locked='true'] body {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--bone);
+  background: var(--shadow);
+  color: var(--cream);
   font-family: var(--font-text);
   font-size: var(--t-body);
   line-height: 1.45;
@@ -129,18 +216,25 @@ img {
    Type primitives
    -------------------------------------------------------------------------- */
 
+/*
+ * The display face is a chunky rounded poster face, not a grotesque. It is
+ * already wide and tightly fitted, so the old -0.045em tracking collided the
+ * bowls; it wants a hair of positive tracking and more leading instead.
+ */
 .display {
   font-family: var(--font-display);
-  font-weight: 800;
-  line-height: 0.84;
-  letter-spacing: -0.045em;
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
   margin: 0;
 }
 
 .wordmark {
   font-size: var(--t-wordmark);
-  letter-spacing: -0.055em;
+  /* The poster face is wide and already tightly fitted; the old -0.055em was
+     tuned for a condensed grotesque and collides the O and the L here. */
+  letter-spacing: -0.005em;
 }
 
 .micro {
@@ -159,8 +253,11 @@ img {
   text-wrap: balance;
 }
 
+/* Reads against whichever ink the current skin set, rather than assuming a
+   light-on-dark page the way the monochrome build could. */
 .dim {
-  color: var(--bone-dim);
+  color: var(--ink);
+  opacity: 0.72;
 }
 
 /* Accent words. Colour is applied per-instance via --accent. */
