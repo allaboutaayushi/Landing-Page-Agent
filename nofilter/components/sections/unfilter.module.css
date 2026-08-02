@@ -6,6 +6,7 @@
  */
 
 .wrap {
+  position: relative;
   display: grid;
   gap: clamp(2.5rem, 7vh, 5rem);
   padding-block: clamp(3rem, 9vh, 7rem);
@@ -14,6 +15,8 @@
 }
 
 .line {
+  position: relative;
+  z-index: 1;
   font-size: clamp(2rem, 6.2vw, 5.5rem);
   line-height: 0.95;
   margin: 0;
@@ -76,6 +79,8 @@
 }
 
 .tagline {
+  position: relative;
+  z-index: 1;
   justify-self: center;
   text-align: center;
   max-width: 26ch;
@@ -92,5 +97,73 @@
   }
   .flee {
     translate: none;
+  }
+}
+
+/* --------------------------------------------------- doodles */
+
+/*
+ * Marks scattered around the lines.
+ *
+ * Behind the type and inert to the pointer, so a doodle can never intercept a
+ * hover meant for a line — the whole point of that block is that the words
+ * react, and a stray SVG swallowing the event would break it.
+ */
+.doodles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.doodle {
+  position: absolute;
+  height: auto;
+  /* Weighted up from 0.7: a thin stroke on saturated red reads as a scratch
+     rather than as a drawn mark. */
+  opacity: 0.88;
+  animation: doodleFloat 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+.doodle.yellow {
+  color: var(--yellow);
+}
+.doodle.teal {
+  color: var(--teal);
+}
+.doodle.pink {
+  color: var(--pink);
+}
+.doodle.white {
+  color: var(--white);
+}
+
+/*
+ * A wander rather than a bob. Rotation and travel run on different phases, so
+ * a mark never returns to the same attitude at the same place — which is what
+ * keeps nine of them on screen from reading as one repeated loop.
+ */
+@keyframes doodleFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  27% {
+    transform: translate3d(10px, -14px, 0) rotate(9deg) scale(1.06);
+  }
+  53% {
+    transform: translate3d(-8px, -6px, 0) rotate(-7deg) scale(0.95);
+  }
+  78% {
+    transform: translate3d(6px, 12px, 0) rotate(5deg) scale(1.03);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doodle {
+    animation: none;
   }
 }

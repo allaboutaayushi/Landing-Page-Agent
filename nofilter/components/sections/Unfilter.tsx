@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { UNFILTER } from '@/lib/content';
+import Doodles from './Doodles';
 import s from './unfilter.module.css';
 
 /**
@@ -100,6 +101,7 @@ export default function Unfilter() {
 
   return (
     <div className={s.wrap} ref={wrap}>
+      <Doodles />
       {UNFILTER.lines.map((line, i) => (
         <p key={line} className={`display ${s.line}`} data-place={UNFILTER.places[i]}>
           {/*
