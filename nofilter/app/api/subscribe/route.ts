@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { normalisePhone } from '@/lib/server/phone';
 import { rateLimit, clientIp } from '@/lib/server/rateLimit';
-import { getStore, type Signup } from '@/lib/server/store';
+import { persistSignup, type Signup } from '@/lib/server/store';
 import { CAPTURE } from '@/lib/content';
 
 /** Needs Node crypto and the Google JWT signer, so not the edge runtime. */
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
   };
 
   try {
-    await getStore().append(signup);
+    await persistSignup(signup);
   } catch (error) {
     // The real reason goes to the server log; the client gets nothing that
     // would reveal the storage backend or its configuration.
