@@ -1,0 +1,31 @@
+# Netlify build configuration.
+#
+# The Next app is not at the repo root — it lives in nofilter/ — which is why
+# importing this repo without this file fails: Netlify looks for a framework at
+# the root, finds none, and stops. `base` points it at the right directory and
+# everything else is resolved relative to that.
+
+[build]
+  base = "nofilter"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Next 16 needs a modern runtime; Netlify's default is older than that.
+  NODE_VERSION = "22"
+
+  # The signup store refuses the CSV fallback in production unless asked,
+  # because a serverless filesystem is wiped between invocations and rows
+  # would disappear silently. This deploy is a preview, so the flag is on and
+  # the path is /tmp — the only writable location on the platform.
+  #
+  # Signups captured here are EPHEMERAL and exist only to prove the form
+  # works. Before collecting anything real, remove both of these and set
+  # GOOGLE_SHEETS_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY
+  # instead — the store switches to Sheets on its own once they are present.
+  CAPTURE_ALLOW_CSV = "true"
+  CAPTURE_CSV_PATH = "/tmp/nf-signups.csv"
+
+# Gives the API route a serverless function and handles Next's routing.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
