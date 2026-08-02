@@ -59,6 +59,7 @@ function StationCaption({ index }: { index: number }) {
       ref={wrap}
       className={s.stationBlock}
       data-side={index % 2 === 0 ? 'left' : 'right'}
+      data-pattern={(['dots', 'check', 'stripe'] as const)[index % 3]}
       style={{ '--accent': PALETTE[station.accent] } as React.CSSProperties}
     >
       {/*

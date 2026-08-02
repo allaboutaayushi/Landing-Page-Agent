@@ -561,3 +561,78 @@
     display: none;
   }
 }
+
+/* --------------------------------------------------- deck motifs */
+
+/*
+ * Pattern fills for the half of each station panel the WebGL ring used to
+ * occupy. Drawn with gradients rather than shipped as images: they tile at any
+ * size, cost no requests, and recolour themselves from the panel's own --pop,
+ * so a station never needs its pattern re-exported when its hue changes.
+ */
+.stationSticky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Quiet enough to read as texture. At full strength the dots competed with
+     the headline instead of sitting behind it. */
+  opacity: 0.14;
+}
+
+/* The pattern fills the half the type does not occupy, and fades out before
+   it reaches the copy — full bleed put a lattice straight under the words. */
+.stationBlock[data-side='left'] .stationSticky::before {
+  left: auto;
+  right: 0;
+  width: 58%;
+  mask-image: linear-gradient(to right, transparent, #000 32%);
+}
+
+.stationBlock[data-side='right'] .stationSticky::before {
+  right: auto;
+  left: 0;
+  width: 58%;
+  mask-image: linear-gradient(to left, transparent, #000 32%);
+}
+
+/* Halftone — dots on a diagonal lattice, as on the deck's floor graphics. */
+.stationBlock[data-pattern='dots'] .stationSticky::before {
+  background-image: radial-gradient(var(--pop) 22%, transparent 23%),
+    radial-gradient(var(--pop) 22%, transparent 23%);
+  background-size: 46px 46px;
+  background-position: 0 0, 23px 23px;
+}
+
+/* Checkerboard — the arch trim. */
+.stationBlock[data-pattern='check'] .stationSticky::before {
+  background-image: conic-gradient(
+    var(--pop) 0 25%,
+    transparent 0 50%,
+    var(--pop) 0 75%,
+    transparent 0
+  );
+  background-size: 84px 84px;
+}
+
+/* Diagonal stripe — the ribbon that runs under the wordmark. */
+.stationBlock[data-pattern='stripe'] .stationSticky::before {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--pop) 0 18px,
+    transparent 18px 46px
+  );
+}
+
+/* The type has to clear the pattern behind it. */
+.stationSticky > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The hero's sparkle field sits behind the wordmark. */
+.hero > *:not([class*='field']) {
+  position: relative;
+  z-index: 1;
+}

@@ -4,6 +4,7 @@ import { GET_IN, FOOTER } from '@/lib/content';
 import { Chars, Lines } from '@/components/Reveal';
 import { cursorProps } from '@/components/Cursor';
 import { useStore } from '@/lib/store';
+import { SparkleField } from '@/components/Motifs';
 import s from './sections.module.css';
 
 /**
@@ -18,6 +19,7 @@ export default function GetIn() {
 
   return (
     <section data-act="getIn" data-skin="pink" id="get-in" className={s.getIn}>
+      <SparkleField variant="corner" />
       <div className={s.getInInner}>
         <span className={`micro dim ${s.eyebrow}`}>{GET_IN.eyebrow}</span>
 
