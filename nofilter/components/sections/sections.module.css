@@ -194,11 +194,16 @@
 }
 
 .whatIsBody {
+  position: relative;
   display: grid;
   gap: 1.4rem;
   max-width: 60ch;
   justify-self: end;
   text-align: left;
+  /* Pulled up toward the stamp. The section's own gap left it floating
+     mid-column with nothing above it; closing that distance makes the copy
+     read as belonging to the heading rather than to the lines below. */
+  margin-top: clamp(-9rem, -7vh, -3rem);
 }
 
 .whatIsLede {
@@ -649,4 +654,75 @@
 .hero > *:not([class*='field']) {
   position: relative;
   z-index: 1;
+}
+
+
+/* --------------------------------------------------- the pointing arrow */
+
+/*
+ * A hand-drawn arrow leading the eye from the copy down into the unfilter
+ * lines. Stroked and uneven on purpose — the same reasoning as the doodles:
+ * a clean bezier reads as a diagram, a wobbling one reads as drawn.
+ *
+ * It draws itself in when scrolled to, tip last, so the eye is pulled along
+ * the path in the direction it points rather than the whole thing appearing.
+ */
+.arrow {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: clamp(120px, 15vw, 230px);
+  height: auto;
+  /* Pulled tight at the bottom so the tip lands just off the first line
+     rather than pointing across empty space at it. */
+  margin-block: clamp(-2rem, -3vh, -1rem) clamp(-13rem, -14vh, -5rem);
+  color: var(--white);
+  overflow: visible;
+  animation: arrowSway 7s ease-in-out infinite;
+}
+
+/*
+ * Both paths declare `pathLength="1"`, so one dash covers the whole stroke
+ * whatever its real arc length is — and neither uses `non-scaling-stroke`,
+ * which would make Chromium measure the dash in screen space against a length
+ * normalised in user space and leave the tip permanently undrawn.
+ */
+.arrowPath,
+.arrowHead {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: arrowDraw 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* The head waits for the shaft, so the arrow arrives pointing somewhere. */
+.arrowHead {
+  animation-delay: 1.1s;
+  animation-duration: 0.5s;
+}
+
+@keyframes arrowDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* A slow lean, so it never sits perfectly still against the moving lines. */
+@keyframes arrowSway {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3.5deg) translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    animation: none;
+  }
+  .arrowPath,
+  .arrowHead {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
 }
