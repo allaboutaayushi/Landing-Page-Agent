@@ -14,17 +14,27 @@
   # Next 16 needs a modern runtime; Netlify's default is older than that.
   NODE_VERSION = "22"
 
-  # The signup store refuses the CSV fallback in production unless asked,
-  # because a serverless filesystem is wiped between invocations and rows
-  # would disappear silently. This deploy is a preview, so the flag is on and
-  # the path is /tmp — the only writable location on the platform.
-  #
-  # Signups captured here are EPHEMERAL and exist only to prove the form
-  # works. Before collecting anything real, remove both of these and set
-  # GOOGLE_SHEETS_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY
-  # instead — the store switches to Sheets on its own once they are present.
-  CAPTURE_ALLOW_CSV = "true"
-  CAPTURE_CSV_PATH = "/tmp/nf-signups.csv"
+# Everything the SUBSCRIBE ROUTE needs must be set in the Netlify UI, under
+# Site configuration → Environment variables — NOT here.
+#
+# Values in this file are build-time only. They are absent from the serverless
+# function at runtime, so setting the capture variables here made getStore()
+# throw inside the function and the door answered "We couldn't save that."
+#
+# Set these in the UI instead:
+#
+#   For real, durable capture (recommended):
+#     GOOGLE_SHEETS_ID
+#     GOOGLE_SERVICE_ACCOUNT_EMAIL
+#     GOOGLE_PRIVATE_KEY
+#   The store picks Sheets automatically once all three are present.
+#
+#   For a throwaway preview only:
+#     CAPTURE_ALLOW_CSV = true
+#     CAPTURE_CSV_PATH  = /tmp/nf-signups.csv
+#   /tmp is the only writable path on the platform and is wiped between
+#   invocations, so rows captured this way WILL be lost. It proves the form
+#   works; it does not keep anything.
 
 # Gives the API route a serverless function and handles Next's routing.
 [[plugins]]

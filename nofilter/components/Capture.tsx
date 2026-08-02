@@ -111,6 +111,18 @@ export default function Capture() {
   // all three overlays at once — see the lock effect there. This component just
   // declares that it is open and lets the rig decide.
 
+  /**
+   * Unlatch the door without recording a pass.
+   *
+   * Used when the failure is ours. It deliberately does not call passGate(),
+   * so nothing is written to localStorage and the visitor is asked again next
+   * time — by then the backend may be fixed and the signup collectable.
+   */
+  const letThemIn = () => {
+    if (!isGate) return;
+    window.setTimeout(() => useStore.setState({ gateOpen: false }), 2600);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === 'sending') return;
@@ -157,6 +169,11 @@ export default function Capture() {
       if (!res.ok) {
         setStatus('error');
         setError(body.error ?? 'That didn’t go through. Try again in a moment.');
+        // A rejected value is worth re-asking for; a broken backend is not.
+        // 4xx means they can fix it by retyping, so the door holds. Anything
+        // else is our fault, and holding a whole site shut because our own
+        // storage is down punishes the visitor for it — so the door opens.
+        if (res.status >= 500) letThemIn();
         return;
       }
 
@@ -168,6 +185,7 @@ export default function Capture() {
     } catch {
       setStatus('error');
       setError('Network’s not playing. Try again in a moment.');
+      letThemIn();
     }
   };
 
