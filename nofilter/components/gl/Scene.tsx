@@ -10,6 +10,7 @@ import { GROUND, PALETTE } from '@/lib/palette';
 import { groundAt } from '@/lib/ground';
 import { ACTS } from './path';
 import Backdrop from './Backdrop';
+import Stars from './Stars';
 import CameraRig from './CameraRig';
 import Lens from './Lens';
 import Shards from './Shards';
@@ -117,6 +118,7 @@ export default function Scene() {
         <RevealBridge />
         <GroundColour />
         <Backdrop />
+        <Stars count={quality === 'high' ? 520 : 220} />
         <CameraRig />
 
         <ambientLight intensity={0.35} />
