@@ -1,6 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { blobsConfigured, readAllSignups, toCsv } from '@/lib/server/store/blobs';
+import { SESSION_COOKIE, cookieMatches } from './session/route';
 
 /** Needs Node crypto and the Blobs SDK, so not the edge runtime. */
 export const runtime = 'nodejs';
@@ -31,6 +33,11 @@ export async function GET(request: Request) {
   if (!expected) return deny();
 
   const url = new URL(request.url);
+  // A session cookie from /signups counts as well as a token in the URL, so
+  // the password can be typed into a form instead of living in the address bar.
+  const cookieStore = await cookies();
+  const viaCookie = cookieMatches(cookieStore.get(SESSION_COOKIE)?.value, expected);
+
   const supplied =
     url.searchParams.get('token') ??
     request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ??
@@ -38,7 +45,7 @@ export async function GET(request: Request) {
 
   // Same 404 for a wrong token as for no token, so the route's existence is
   // not confirmed to someone guessing.
-  if (!supplied || !tokenMatches(supplied, expected)) return deny();
+  if (!viaCookie && (!supplied || !tokenMatches(supplied, expected))) return deny();
 
   if (!blobsConfigured()) {
     return NextResponse.json(
