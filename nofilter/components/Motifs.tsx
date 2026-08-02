@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import s from './Motifs.module.css';
 
 /**
@@ -38,6 +41,50 @@ type FieldProps = {
  * impossible to art-direct.
  */
 export function SparkleField({ variant = 'hero' }: FieldProps) {
+  const field = useRef<HTMLDivElement>(null);
+
+  /*
+   * Sparkles shy away from the pointer and brighten as it passes.
+   *
+   * Written straight to CSS custom properties from a rAF loop rather than
+   * through React state — this runs on every mouse move, and re-rendering a
+   * dozen SVGs at that rate would cost far more than the effect is worth.
+   * The pointer is damped, so the field drifts after the cursor instead of
+   * snapping to it, which is what makes it read as air rather than as UI.
+   */
+  useEffect(() => {
+    const el = field.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let raf = 0;
+    let tx = 0.5;
+    let ty = 0.5;
+    let cx = 0.5;
+    let cy = 0.5;
+
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      tx = (e.clientX - r.left) / r.width;
+      ty = (e.clientY - r.top) / r.height;
+    };
+
+    const loop = () => {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      el.style.setProperty('--px', cx.toFixed(4));
+      el.style.setProperty('--py', cy.toFixed(4));
+      raf = requestAnimationFrame(loop);
+    };
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    raf = requestAnimationFrame(loop);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   const marks =
     variant === 'hero'
       ? [
@@ -62,19 +109,25 @@ export function SparkleField({ variant = 'hero' }: FieldProps) {
         ];
 
   return (
-    <div className={s.field} aria-hidden="true">
+    <div ref={field} className={s.field} aria-hidden="true">
       {marks.map((m, i) => (
         <Sparkle
           key={i}
           className={`${s.mark} ${s[m.tone as 'cream' | 'teal' | 'yellow']}`}
-          style={{
-            top: m.top,
-            left: m.left,
-            right: m.right,
-            bottom: m.bottom,
-            width: m.size,
-            animationDelay: `${m.delay}s`,
-          }}
+          style={
+            {
+              top: m.top,
+              left: m.left,
+              right: m.right,
+              bottom: m.bottom,
+              width: m.size,
+              animationDelay: `${m.delay}s`,
+              // Its own position, so the shy-away transform below can work
+              // out which way "away from the pointer" is for this mark.
+              '--mx': (parseFloat(m.left ?? '') || 100 - parseFloat(m.right ?? '0')) / 100,
+              '--my': (parseFloat(m.top ?? '') || 100 - parseFloat(m.bottom ?? '0')) / 100,
+            } as React.CSSProperties
+          }
         />
       ))}
     </div>

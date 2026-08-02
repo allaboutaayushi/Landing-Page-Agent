@@ -23,6 +23,8 @@ function Station({ index }: { index: number }) {
   const z = STATION_Z[index];
 
   const group = useRef<THREE.Group>(null);
+  const flare = useRef<THREE.Mesh>(null);
+  const rays = useRef<THREE.Mesh>(null);
   const plane = useRef<THREE.Mesh>(null);
   const ring = useRef<THREE.Mesh>(null);
   const ring2 = useRef<THREE.Mesh>(null);
@@ -83,7 +85,7 @@ function Station({ index }: { index: number }) {
     // Once the ring is right on top of the camera it spans the whole screen and
     // turns into a giant coloured circle over the type. Fade it out through the
     // last stretch so you pass through it rather than into it.
-    const passing = clamp(1 - (5 - Math.min(dist, 5)) / 5);
+      const passing = clamp(1 - (5 - Math.min(dist, 5)) / 5);
     const glow = (0.35 + proximity * 2.4 + Math.abs(rig.velocity) * 1.2) * passing * exit;
 
     if (ring.current) {
@@ -91,6 +93,24 @@ function Station({ index }: { index: number }) {
         clamp(0.1 + proximity * 0.9) * passing * exit;
       ring.current.scale.setScalar(1 + proximity * 0.05);
     }
+    // The crossing. A short, sharp bloom as the ring passes the camera plane,
+    // so going through a station reads as a threshold rather than as more
+    // scenery going by. Squared, so it is a flash and not a long fade.
+    const crossing = Math.pow(clamp(1 - dist / 4.5), 3) * exit;
+    if (flare.current) {
+      const m = flare.current.material as THREE.MeshBasicMaterial;
+      m.opacity = crossing * 0.85;
+      const s = 1 + crossing * 7;
+      flare.current.scale.setScalar(s);
+    }
+    if (rays.current) {
+      const m = rays.current.material as THREE.MeshBasicMaterial;
+      // Rays lead the crossing — they are visible on approach and gone once
+      // you are through, which is what gives the ring somewhere to pull you.
+      m.opacity = clamp(proximity * 1.2 - 0.15) * 0.28 * exit;
+      rays.current.rotation.z = state.clock.elapsedTime * 0.08 * (index % 2 ? 1 : -1);
+    }
+
     if (ring2.current) {
       const m = ring2.current.material as THREE.MeshStandardMaterial;
       m.emissiveIntensity = glow;
@@ -117,6 +137,40 @@ function Station({ index }: { index: number }) {
           emissiveIntensity={0.45}
           metalness={0.35}
           roughness={0.35}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/*
+        The flare. An additive disc sitting in the ring's plane that blooms as
+        the camera crosses it — cheap, and it reads as light rather than as an
+        object because it never writes depth.
+      */}
+      <mesh ref={flare} position={[0, 0, 0.1]}>
+        <circleGeometry args={[1.6, 48]} />
+        <meshBasicMaterial
+          color={hue}
+          transparent
+          opacity={0}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/*
+        Light spilling out of the ring toward you. An open cone, additive and
+        single-sided, so it reads as a shaft rather than as a solid funnel.
+      */}
+      <mesh ref={rays} position={[0, 0, 3.2]} rotation={[Math.PI / 2, 0, 0]}>
+        <coneGeometry args={[5.0, 7.5, 32, 1, true]} />
+        <meshBasicMaterial
+          color={hue}
+          transparent
+          opacity={0}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
           toneMapped={false}
         />
       </mesh>

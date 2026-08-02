@@ -10,6 +10,9 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  /* Centre of the field until the pointer says otherwise. */
+  --px: 0.5;
+  --py: 0.5;
 }
 
 .mark {
@@ -18,6 +21,19 @@
   opacity: 0.9;
   animation: twinkle 7s var(--ease-inout) infinite;
   will-change: transform, opacity;
+
+  /*
+   * Shy away from the pointer.
+   *
+   * Distance is squared-ish through the clamp so only marks the cursor is
+   * actually near move — a field where everything shifts at once reads as a
+   * parallax layer, not as individual sparks reacting.
+   */
+  --dx: calc(var(--mx, 0.5) - var(--px));
+  --dy: calc(var(--my, 0.5) - var(--py));
+  --near: clamp(0, calc(1 - (var(--dx) * var(--dx) + var(--dy) * var(--dy)) * 14), 1);
+  translate: calc(var(--dx) * var(--near) * 90px) calc(var(--dy) * var(--near) * 90px);
+  transition: translate 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cream {
