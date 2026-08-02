@@ -62,6 +62,8 @@ export default function Capture() {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState('');
+  /** A submission failed on our side, so an explicit way in is offered. */
+  const [stuck, setStuck] = useState(false);
 
   // Decide the door after mount — never during render, so the server and the
   // first client pass agree and hydration stays clean.
@@ -120,6 +122,7 @@ export default function Capture() {
    */
   const letThemIn = () => {
     if (!isGate) return;
+    setStuck(true);
     window.setTimeout(() => useStore.setState({ gateOpen: false }), 2600);
   };
 
@@ -169,11 +172,16 @@ export default function Capture() {
       if (!res.ok) {
         setStatus('error');
         setError(body.error ?? 'That didn’t go through. Try again in a moment.');
-        // A rejected value is worth re-asking for; a broken backend is not.
-        // 4xx means they can fix it by retyping, so the door holds. Anything
-        // else is our fault, and holding a whole site shut because our own
-        // storage is down punishes the visitor for it — so the door opens.
-        if (res.status >= 500) letThemIn();
+        // Any failure that reached the server opens the door.
+        //
+        // This used to open only on 5xx, on the theory that a 4xx was the
+        // visitor's to fix. That was wrong: the rate limiter answers 429 after
+        // six tries, so anyone who retried a failing form locked themselves
+        // out of the site permanently, and the phone validator can 400 a
+        // number its owner knows is fine. None of those are things a visitor
+        // can do anything about. Real input mistakes are caught client-side
+        // and never get this far.
+        letThemIn();
         return;
       }
 
@@ -301,6 +309,21 @@ export default function Capture() {
                   <p id="nf-error" className={s.error} role="alert">
                     {error}
                   </p>
+                )}
+
+                {/* Shown once a submission has failed on our side. The timer
+                    in letThemIn() opens the door anyway, but waiting on a
+                    timer you cannot see is indistinguishable from being
+                    stuck — so there is also something to press. */}
+                {stuck && drawAsGate && (
+                  <button
+                    type="button"
+                    className={`micro ${s.dismiss}`}
+                    onClick={() => useStore.setState({ gateOpen: false })}
+                    {...cursorProps('hover')}
+                  >
+                    Go on through →
+                  </button>
                 )}
 
                 <button
