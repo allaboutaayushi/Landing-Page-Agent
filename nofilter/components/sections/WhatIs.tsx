@@ -5,6 +5,7 @@ import { WHAT_IS } from '@/lib/content';
 import { PALETTE } from '@/lib/palette';
 import { Chars, Lines, useDrift } from '@/components/Reveal';
 import Unfilter from './Unfilter';
+import StampHeading from './StampHeading';
 import s from './sections.module.css';
 
 export default function WhatIs() {
@@ -15,15 +16,7 @@ export default function WhatIs() {
     <section data-act="whatIs" data-skin="red" id="what-is" className={s.whatIs}>
       <header className={s.whatIsHead}>
         <span className={`micro dim ${s.eyebrow}`}>01 — THE IDEA</span>
-        <h2 className={`display stamp ${s.sectionHead}`}>
-          <span className="sr-only">{WHAT_IS.heading}</span>
-          <span aria-hidden="true" className={s.headLine}>
-            <Chars text="WHAT IS" />
-          </span>
-          <span aria-hidden="true" className={s.headLine}>
-            <Chars text="NO FILTER?" delay={0.08} />
-          </span>
-        </h2>
+        <StampHeading />
       </header>
 
       <div className={s.whatIsBody}>
