@@ -44,13 +44,21 @@ export function SparkleField({ variant = 'hero' }: FieldProps) {
           { top: '8%', left: '6%', size: 92, tone: 'cream', delay: 0 },
           { top: '18%', left: '13%', size: 34, tone: 'teal', delay: 1.4 },
           { top: '12%', right: '9%', size: 56, tone: 'cream', delay: 2.1 },
+          { top: '28%', right: '22%', size: 22, tone: 'yellow', delay: 3.2 },
           { top: '46%', left: '3%', size: 44, tone: 'yellow', delay: 0.7 },
+          { top: '58%', right: '4%', size: 68, tone: 'cream', delay: 1.9 },
+          { top: '38%', left: '21%', size: 18, tone: 'cream', delay: 2.9 },
           { bottom: '9%', right: '6%', size: 104, tone: 'cream', delay: 1.1 },
           { bottom: '20%', right: '15%', size: 30, tone: 'teal', delay: 2.6 },
+          { bottom: '28%', left: '11%', size: 26, tone: 'yellow', delay: 3.6 },
+          { bottom: '6%', left: '28%', size: 40, tone: 'teal', delay: 0.3 },
         ]
       : [
           { top: '14%', right: '8%', size: 62, tone: 'cream', delay: 0.4 },
+          { top: '30%', left: '12%', size: 26, tone: 'yellow', delay: 2.4 },
+          { top: '62%', right: '18%', size: 34, tone: 'teal', delay: 1.2 },
           { bottom: '16%', left: '7%', size: 40, tone: 'cream', delay: 1.8 },
+          { bottom: '30%', right: '9%', size: 20, tone: 'yellow', delay: 3.1 },
         ];
 
   return (
