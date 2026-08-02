@@ -91,12 +91,18 @@ function Station({ index }: { index: number }) {
       {/* Outer hoop — the thing you pass through. */}
       <mesh ref={ring2}>
         <torusGeometry args={[5.2, 0.035, 10, 160]} />
+        {/*
+          The hoop used to be a near-black body lit by an emissive rim, which
+          read as a glowing ring against a dark interior. On the cream ground
+          that reads as mud — an unlit dark object on a light field — so the
+          body is the station's own hue now and carries the colour itself.
+        */}
         <meshStandardMaterial
-          color="#0b0b0c"
+          color={hue}
           emissive={hue}
-          emissiveIntensity={1}
-          metalness={0.6}
-          roughness={0.3}
+          emissiveIntensity={0.45}
+          metalness={0.35}
+          roughness={0.35}
           toneMapped={false}
         />
       </mesh>
@@ -104,7 +110,7 @@ function Station({ index }: { index: number }) {
       {/* Inner hairline hoop, offset in Z, gives the ring depth on approach. */}
       <mesh ref={ring} position={[0, 0, -0.9]}>
         <torusGeometry args={[4.6, 0.008, 8, 120]} />
-        <meshBasicMaterial color={hue} transparent opacity={0.4} toneMapped={false} />
+        <meshBasicMaterial color={hue} transparent opacity={0.75} toneMapped={false} />
       </mesh>
 
       {/* The photograph, suspended just behind the hoop. */}

@@ -60,7 +60,15 @@ function StationCaption({ index }: { index: number }) {
       className={s.stationBlock}
       data-side={index % 2 === 0 ? 'left' : 'right'}
       data-pattern={(['dots', 'check', 'stripe'] as const)[index % 3]}
-      style={{ '--accent': PALETTE[station.accent] } as React.CSSProperties}
+      style={
+        {
+          '--accent': PALETTE[station.accent],
+          // The panel no longer carries the hue — the ground is cream through
+          // the tunnel — so the station's colour identity moves to --pop,
+          // which the index counter and rules read from.
+          '--pop': PALETTE[station.accent],
+        } as React.CSSProperties
+      }
     >
       {/*
         Each station takes its own colourway as a full panel. This used to be a
@@ -68,7 +76,7 @@ function StationCaption({ index }: { index: number }) {
         canvas gone the panel *is* the station, which is closer to how the deck
         treats them anyway.
       */}
-      <div ref={inner} className={s.stationSticky} data-skin={station.accent}>
+      <div ref={inner} className={s.stationSticky} data-skin="cream">
         <span className={`display ${s.stationIndex}`}>{station.index}</span>
         <h3 className={`display ${s.stationTitle}`}>{station.title}</h3>
         <p className={s.stationLine}>{station.line}</p>
@@ -113,7 +121,7 @@ function StationIndex() {
 
 export default function Experience() {
   return (
-    <section data-act="experience" data-skin="shadow" id="experience" className={s.experience}>
+    <section data-act="experience" data-skin="cream" id="experience" className={s.experience}>
       <h2 className="sr-only">The NO FILTER experience</h2>
       <StationIndex />
       {STATIONS.map((_, i) => (
