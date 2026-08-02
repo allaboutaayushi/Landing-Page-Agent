@@ -18,17 +18,19 @@ export const WHAT_IS = {
   statements: [
     {
       key: 'MUSIC',
-      accent: 'red' as PaletteKey,
+      // Yellow, not red — the statement list sits on the red ground now, and
+      // a red accent word disappeared into it completely.
+      accent: 'yellow' as PaletteKey,
       line: 'The artists, sounds and sets that change the direction of your night.',
     },
     {
       key: 'CULTURE',
-      accent: 'teal' as PaletteKey,
+      accent: 'orange' as PaletteKey,
       line: 'The things shaping what people are watching, wearing, listening to and talking about.',
     },
     {
       key: 'ENERGY',
-      accent: 'yellow' as PaletteKey,
+      accent: 'teal' as PaletteKey,
       line: 'A place where the atmosphere keeps changing around you.',
     },
     {

@@ -23,10 +23,14 @@ function groundKeys(): Array<[number, THREE.Color]> {
 
   const keys: Array<[number, THREE.Color]> = [
     [0.0, new THREE.Color(PALETTE.red)],
-    [0.1, new THREE.Color(PALETTE.red)],
-    // Cream survives as the breath between the hero and the tunnel.
-    [0.18, new THREE.Color(GROUND.cream)],
-    [Math.max(expStart - 0.02, 0.19), new THREE.Color(GROUND.cream)],
+    // Red holds through the hero and the idea section. It used to fade to
+    // cream partway down the idea copy, which left that type stranded between
+    // two grounds — dark enough to lose on the red, light enough to lose on
+    // the cream. One ground per section, and the ink can be chosen for it.
+    [Math.max(expStart - 0.06, 0.2), new THREE.Color(PALETTE.red)],
+    // A short breath before the tunnel, so the first station arrives as a
+    // change rather than as more of the same.
+    [Math.max(expStart - 0.015, 0.22), new THREE.Color(GROUND.cream)],
   ];
 
   // One key per station, each a shade deepened so the ring and the type still

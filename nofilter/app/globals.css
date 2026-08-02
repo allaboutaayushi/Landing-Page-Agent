@@ -121,7 +121,7 @@ html {
 [data-skin][data-solid] {
   background: var(--ground);
 }
-[data-skin='red']    { --ground: var(--red);    --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }
+[data-skin='red']    { --ground: var(--red);    --ink: var(--white);  --hairline: rgba(251,252,252,0.34); --pop: var(--yellow); }
 [data-skin='yellow'] { --ground: var(--yellow); --ink: var(--shadow); --hairline: rgba(21,43,24,0.28);  --pop: var(--red); }
 [data-skin='teal']   { --ground: var(--teal);   --ink: var(--shadow); --hairline: rgba(21,43,24,0.28);  --pop: var(--pink); }
 [data-skin='pink']   { --ground: var(--pink);   --ink: var(--cream);  --hairline: rgba(244,231,212,0.3);  --pop: var(--yellow); }

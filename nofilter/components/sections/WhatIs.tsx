@@ -11,7 +11,7 @@ export default function WhatIs() {
   useDrift(driftRef, 40);
 
   return (
-    <section data-act="whatIs" data-skin="cream" id="what-is" className={s.whatIs}>
+    <section data-act="whatIs" data-skin="red" id="what-is" className={s.whatIs}>
       <header className={s.whatIsHead}>
         <span className={`micro dim ${s.eyebrow}`}>01 — THE IDEA</span>
         <h2 className={`display ${s.sectionHead}`}>
