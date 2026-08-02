@@ -7,7 +7,12 @@
 
 [build]
   base = "nofilter"
-  command = "npm run build"
+  # Netlify registers forms by scanning the PUBLISH directory for form markup
+  # at deploy time. Files under public/ are served by the Next runtime at
+  # request time and are never copied into .next, so the form definition has
+  # to be placed into the publish directory explicitly — without this copy the
+  # scan finds nothing and the "signups" form never appears in the dashboard.
+  command = "npm run build && cp public/__forms.html .next/__forms.html"
   publish = ".next"
 
 [build.environment]
