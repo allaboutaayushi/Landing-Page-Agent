@@ -324,13 +324,13 @@
 .stationBlock[data-side='left'] .stationSticky {
   justify-items: start;
   text-align: left;
-  padding-right: clamp(2rem, 20vw, 22rem);
+  padding-right: 52vw;
 }
 
 .stationBlock[data-side='right'] .stationSticky {
   justify-items: end;
   text-align: right;
-  padding-left: clamp(2rem, 20vw, 22rem);
+  padding-left: 52vw;
 }
 
 .stationIndex {
@@ -578,7 +578,7 @@
   pointer-events: none;
   /* Quiet enough to read as texture. At full strength the dots competed with
      the headline instead of sitting behind it. */
-  opacity: 0.14;
+  opacity: 0;
 }
 
 /* The pattern fills the half the type does not occupy, and fades out before

@@ -9,14 +9,12 @@ import Grain from '@/components/Grain';
 import Preloader from '@/components/Preloader';
 import ScrollRig from '@/components/ScrollRig';
 import Capture from '@/components/Capture';
+import Scene from '@/components/gl/SceneClient';
 
 /**
- * Everything the page says is server-rendered.
- *
- * The WebGL tunnel that used to sit under this is unmounted for the flat
- * rebrand: the brand's colourways are opaque grounds, so the canvas was
- * covered edge to edge and paying for a renderer nobody could see. The layer
- * is still in components/gl — re-adding `<Scene />` here brings it back.
+ * Everything the page *says* is server-rendered — the copy sits in the HTML
+ * whether or not the canvas ever starts. The WebGL layer loads underneath it
+ * on the client and adds the ride, never the meaning.
  */
 export default function Page() {
   return (
@@ -27,6 +25,7 @@ export default function Page() {
 
       <Preloader />
       <ScrollRig />
+      <Scene />
       <Cursor />
       <Nav />
 

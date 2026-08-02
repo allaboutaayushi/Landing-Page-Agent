@@ -14,51 +14,12 @@ import s from './Preloader.module.css';
  */
 export default function Preloader() {
   const loadProgress = useStore((st) => st.loadProgress);
-  const setLoadProgress = useStore((st) => st.setLoadProgress);
   const setShattered = useStore((st) => st.setShattered);
   const setEntered = useStore((st) => st.setEntered);
   const [stage, setStage] = useState<'loading' | 'breaking' | 'gone'>('loading');
   const fired = useRef(false);
 
   const pct = Math.round(loadProgress * 100);
-
-  /**
-   * Drives the counter.
-   *
-   * This used to be fed entirely by the WebGL layer reporting texture loads.
-   * With the canvas gone nothing reported anything and the shell sat at 000
-   * forever, so the meter now waits on what the flat page actually needs: the
-   * two brand faces. `document.fonts.ready` can settle almost instantly on a
-   * warm cache, hence the floor — a counter that flashes past is worse than no
-   * counter. The timeout is the backstop for a browser that never resolves it.
-   */
-  useEffect(() => {
-    let done = false;
-    const start = performance.now();
-    const FLOOR = 900;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      const wait = Math.max(0, FLOOR - (performance.now() - start));
-      window.setTimeout(() => setLoadProgress(1), wait);
-    };
-
-    // Creep upward so the meter reads as progress rather than a two-step jump.
-    const creep = window.setInterval(() => {
-      const elapsed = (performance.now() - start) / FLOOR;
-      setLoadProgress(Math.min(0.92, elapsed * 0.92));
-    }, 60);
-
-    const fonts = document.fonts?.ready ?? Promise.resolve();
-    fonts.then(finish).catch(finish);
-    const backstop = window.setTimeout(finish, 4000);
-
-    return () => {
-      window.clearInterval(creep);
-      window.clearTimeout(backstop);
-    };
-  }, [setLoadProgress]);
 
   useEffect(() => {
     if (loadProgress < 1 || fired.current) return;
