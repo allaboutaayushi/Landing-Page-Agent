@@ -16,7 +16,20 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: { card: 'summary_large_image', title, description },
-  robots: { index: true, follow: true },
+  /*
+   * Kept out of search while the site is still being built.
+   *
+   * `noimageindex` and `nocache` matter as much as `noindex` here: without
+   * them a crawler that has already seen the page can keep serving a cached
+   * copy and the images from it long after the tag goes up. Flip all of this
+   * to true — and change app/robots.ts to match — on launch.
+   */
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
 };
 
 export const viewport: Viewport = {
