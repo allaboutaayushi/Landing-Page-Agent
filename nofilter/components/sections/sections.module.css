@@ -109,6 +109,10 @@
 .sectionHead {
   font-size: var(--t-section);
   display: grid;
+  /* em, so the measure tracks the heading's own size at every breakpoint. */
+  max-width: 9em;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .headLine {
@@ -181,7 +185,7 @@
 }
 
 .whatIsHead {
-  max-width: 20ch;
+  max-width: 100%;
 }
 
 .whatIsBody {
@@ -394,7 +398,7 @@
 }
 
 .expectHead {
-  max-width: 18ch;
+  max-width: 100%;
 }
 
 .expectList {
@@ -470,8 +474,6 @@
 .getInHead {
   font-size: var(--t-display);
   display: grid;
-  /* Over the WebGL wordmark, so it has to cut through. */
-  mix-blend-mode: difference;
 }
 
 .getInLine {
