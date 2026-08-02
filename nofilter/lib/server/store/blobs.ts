@@ -18,14 +18,33 @@ import { SIGNUP_COLUMNS, type Signup, type SignupStore } from './types';
 
 const STORE_NAME = 'nf-signups';
 
+/**
+ * Manual credentials, for when the runtime does not inject a blobs context.
+ *
+ * `NETLIFY` being set is not enough on its own — that only says we are on the
+ * platform. The SDK needs NETLIFY_BLOBS_CONTEXT, which the Next runtime does
+ * not always provide to a route handler, and without it every write fails with
+ * "The environment has not been configured to use Netlify Blobs". Treating the
+ * platform flag as proof of availability is what made the store claim it could
+ * write and then refuse every signup.
+ */
+function manualCredentials() {
+  const siteID = process.env.NETLIFY_SITE_ID;
+  const token = process.env.NETLIFY_API_TOKEN;
+  return siteID && token ? { siteID, token } : null;
+}
+
 export function blobsConfigured() {
-  // Set by Netlify in both build and function runtimes. Without it the SDK
-  // has no site context and would need manual credentials.
-  return Boolean(process.env.NETLIFY);
+  return Boolean(process.env.NETLIFY_BLOBS_CONTEXT) || manualCredentials() !== null;
 }
 
 function store() {
-  return getBlobStore({ name: STORE_NAME, consistency: 'strong' });
+  const manual = manualCredentials();
+  return getBlobStore({
+    name: STORE_NAME,
+    consistency: 'strong',
+    ...(manual ?? {}),
+  });
 }
 
 export function createBlobsStore(): SignupStore | null {
