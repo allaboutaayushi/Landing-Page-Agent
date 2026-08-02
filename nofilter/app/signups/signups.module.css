@@ -1,0 +1,200 @@
+/*
+ * Admin surface, not the site.
+ *
+ * Brand colours, but none of the ride: this is a list to be read and scanned,
+ * so it stays a plain document on the cream ground rather than borrowing the
+ * hero's poster type.
+ */
+
+.gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: var(--red);
+}
+
+.card {
+  background: var(--cream);
+  color: var(--shadow);
+  width: min(26rem, 100%);
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  display: grid;
+  gap: 0.75rem;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.4);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  line-height: 0.95;
+  margin: 0;
+}
+
+.lede {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: rgba(21, 43, 24, 0.72);
+}
+
+.input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(21, 43, 24, 0.25);
+  background: none;
+  outline: none;
+  font-family: var(--font-text);
+  font-size: 1.1rem;
+  color: var(--shadow);
+  padding: 0.6rem 0;
+}
+
+.input:focus {
+  border-color: var(--shadow);
+}
+
+.error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--red);
+}
+
+.button {
+  justify-self: start;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--shadow);
+  color: var(--cream);
+  padding: 0.9rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s var(--ease-out);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--red);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ghost {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.9rem 1.4rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------- list */
+
+.wrap {
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--shadow);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(21, 43, 24, 0.2);
+  padding-bottom: 1.25rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.empty {
+  color: rgba(21, 43, 24, 0.6);
+  font-size: 1rem;
+}
+
+/* The table is the one thing here that can outgrow a phone, so it scrolls in
+   its own right rather than pushing the page sideways. */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid rgba(21, 43, 24, 0.18);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  min-width: 44rem;
+}
+
+.table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(21, 43, 24, 0.6);
+  padding: 0.75rem 1rem;
+  background: rgba(21, 43, 24, 0.05);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(21, 43, 24, 0.12);
+  vertical-align: top;
+}
+
+.table tbody tr:hover {
+  background: rgba(21, 43, 24, 0.04);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dim {
+  color: rgba(21, 43, 24, 0.55);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
