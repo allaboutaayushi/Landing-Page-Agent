@@ -1,5 +1,6 @@
 import { createGoogleSheetsStore, googleSheetsConfigured } from './googleSheets';
 import { createNetlifyFormsStore, netlifyFormsConfigured } from './netlifyForms';
+import { createBlobsStore, blobsConfigured } from './blobs';
 import { createFileStore } from './file';
 import type { SignupStore } from './types';
 
@@ -28,6 +29,19 @@ export function getStore(): SignupStore {
     const sheets = createGoogleSheetsStore();
     if (sheets) {
       cached = sheets;
+      return cached;
+    }
+  }
+
+  // Blobs before Forms: Forms depends on the build scanner finding markup in
+  // the publish directory *and* on form detection being switched on in the
+  // dashboard. Both fail silently and leave the signup with nowhere to go.
+  // Blobs is configured automatically inside the function and either writes or
+  // throws, which is the behaviour worth defaulting to.
+  if (blobsConfigured()) {
+    const blobs = createBlobsStore();
+    if (blobs) {
+      cached = blobs;
       return cached;
     }
   }
