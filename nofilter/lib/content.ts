@@ -50,6 +50,19 @@ export const WHAT_IS = {
   },
 } as const;
 
+/**
+ * The three unfilter lines, plus the line that lands them.
+ *
+ * `places` is parallel to `lines` and decides where each one sits — left,
+ * centre, right — so the block reads as three thoughts drifting in the same
+ * space rather than as a list.
+ */
+export const UNFILTER = {
+  lines: ['Unfilter Your Fit.', 'Unfilter Your Sound.', 'Unfilter Your Experience.'],
+  places: ['left', 'centre', 'right'] as const,
+  tagline: 'One IP. Endless ways to experience culture.',
+} as const;
+
 export type Station = {
   index: string;
   title: string;

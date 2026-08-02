@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { WHAT_IS } from '@/lib/content';
 import { PALETTE } from '@/lib/palette';
 import { Chars, Lines, useDrift } from '@/components/Reveal';
+import Unfilter from './Unfilter';
 import s from './sections.module.css';
 
 export default function WhatIs() {
@@ -34,29 +35,7 @@ export default function WhatIs() {
 
       {/* Each statement is its own scroll beat — the name, then what it means,
           separated by a hairline. No cards, no boxes. */}
-      <ol className={s.statements}>
-        {WHAT_IS.statements.map((st, i) => (
-          <li
-            key={st.key}
-            className={s.statement}
-            style={{ '--accent': PALETTE[st.accent] } as React.CSSProperties}
-          >
-            <hr className="rule" />
-            <div className={s.statementRow}>
-              <span className={`micro dim ${s.statementIndex}`}>
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <h3 className={`display ${s.statementTitle}`}>
-                <span className="sr-only">{`NO FILTER ${st.key}.`}</span>
-                <span aria-hidden="true">
-                  NO FILTER <em className="accent">{st.key}</em>.
-                </span>
-              </h3>
-              <Lines lines={[st.line]} className={`${s.statementLine} dim`} />
-            </div>
-          </li>
-        ))}
-      </ol>
+      <Unfilter />
 
       <div className={s.closer}>
         <hr className="rule" />
