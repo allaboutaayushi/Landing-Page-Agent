@@ -47,12 +47,14 @@
 
 .heroLede {
   text-wrap: balance;
+  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
 }
 
 .heroSub {
-  font-size: 0.88rem;
-  line-height: 1.45;
+  font-size: 1rem;
+  line-height: 1.5;
   max-width: 46ch;
+  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
 }
 
 .heroCta {
@@ -201,7 +203,7 @@
 }
 
 .whatIsCopy {
-  font-size: 0.98rem;
+  font-size: 1.08rem;
   line-height: 1.55;
   margin: 0;
   max-width: 52ch;
@@ -249,8 +251,8 @@
   grid-column: 2;
   grid-row: 2;
   max-width: 46ch;
-  font-size: 1rem;
-  line-height: 1.45;
+  font-size: 1.05rem;
+  line-height: 1.5;
 }
 
 /* --- closer --- */
@@ -345,14 +347,18 @@
 .stationTitle {
   font-size: var(--t-display);
   text-wrap: balance;
+  /* Over the canvas — see .over-canvas in globals. */
+  text-shadow: 0 0 0.45em var(--ground), 0 0 1em var(--ground);
 }
 
 .stationLine {
-  margin: 0.6rem 0 0;
-  max-width: 24ch;
-  font-size: 1.02rem;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--ink) 72%, transparent);
+  margin: 0.7rem 0 0;
+  max-width: 26ch;
+  font-size: 1.12rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
 }
 
 .indexReadout {
@@ -474,6 +480,11 @@
 .getInHead {
   font-size: var(--t-display);
   display: grid;
+  text-shadow: 0 0 0.5em var(--ground), 0 0 1.4em var(--ground);
+}
+
+.getInLineShadow {
+  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
 }
 
 .getInLine {

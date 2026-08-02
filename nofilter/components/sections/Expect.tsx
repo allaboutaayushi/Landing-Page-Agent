@@ -7,7 +7,7 @@ import s from './sections.module.css';
 
 export default function Expect() {
   return (
-    <section data-act="expect" data-skin="yellow" id="expect" className={s.expect}>
+    <section data-act="expect" data-solid data-skin="yellow" id="expect" className={s.expect}>
       <header className={s.expectHead}>
         <span className={`micro dim ${s.eyebrow}`}>03 — ON THE NIGHT</span>
         <h2 className={`display ${s.sectionHead}`}>

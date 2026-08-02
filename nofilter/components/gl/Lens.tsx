@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { GROUND, PALETTE } from '@/lib/palette';
 import { MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { rig, damp, smoothstep } from '@/lib/rig';
@@ -131,10 +132,10 @@ export default function Lens({ quality }: { quality: 'high' | 'low' }) {
         <mesh ref={rim} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[1.005, 0.022, 12, 128]} />
           <meshStandardMaterial
-            color="#0b0b0c"
+            color={GROUND.shadow}
             metalness={0.9}
             roughness={0.25}
-            emissive="#e6182a"
+            emissive={PALETTE.red}
             emissiveIntensity={0.25}
           />
         </mesh>
