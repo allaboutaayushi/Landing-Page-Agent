@@ -7,7 +7,9 @@ import * as THREE from 'three';
 import { rig, damp } from '@/lib/rig';
 import { useStore } from '@/lib/store';
 import { GROUND, PALETTE } from '@/lib/palette';
+import { groundAt } from '@/lib/ground';
 import { ACTS } from './path';
+import Backdrop from './Backdrop';
 import CameraRig from './CameraRig';
 import Lens from './Lens';
 import Shards from './Shards';
@@ -33,69 +35,26 @@ function useQuality(): 'high' | 'low' {
  * than snapping so the shatter has a ramp to ride.
  */
 /**
- * Drives the scene's ground colour from scroll position.
+ * Keeps the fog on the same colour curve as the sky.
  *
- * The canvas is one continuous surface behind the whole page, so a single
- * clear colour painted every section alike — which is why everything past the
- * hero read as the logo's dark green. The ground now walks the brand's
- * colourways instead, and each keyframe matches the [data-skin] on the section
- * above it, so the DOM's ink is always the one chosen to sit on that ground.
- *
- * The tunnel runs on cream rather than a dark interior. Coloured rings on a
- * light field is the higher-contrast reading, but it does mean the stations
- * are lit differently — see Stations for the exposure that goes with this.
+ * The clear colour is no longer what you see — Backdrop paints the sky — but
+ * fog still has to track it, or the far end of the tunnel keeps the previous
+ * colour and leaves a seam where the two meet.
  */
-const GROUND_KEYS: Array<[number, THREE.Color]> = [
-  [0.0, new THREE.Color(PALETTE.red)],
-  [0.1, new THREE.Color(PALETTE.red)],
-  [0.18, new THREE.Color(GROUND.cream)],
-  [0.72, new THREE.Color(GROUND.cream)],
-  [0.78, new THREE.Color(PALETTE.yellow)],
-  [0.85, new THREE.Color(PALETTE.yellow)],
-  [0.92, new THREE.Color(PALETTE.pink)],
-  [1.0, new THREE.Color(PALETTE.pink)],
-];
-
-const scratch = new THREE.Color();
-
-/** The ground colour at a given scroll position, interpolated between keys. */
-function groundAt(progress: number, out: THREE.Color) {
-  const p = Math.min(Math.max(progress, 0), 1);
-
-  for (let i = 0; i < GROUND_KEYS.length - 1; i++) {
-    const [t0, c0] = GROUND_KEYS[i];
-    const [t1, c1] = GROUND_KEYS[i + 1];
-    if (p >= t0 && p <= t1) {
-      const span = t1 - t0;
-      // Smoothstep, so a keyframe boundary is not a visible corner.
-      const raw = span === 0 ? 0 : (p - t0) / span;
-      const eased = raw * raw * (3 - 2 * raw);
-      return out.copy(c0).lerp(c1, eased);
-    }
-  }
-  return out.copy(GROUND_KEYS[GROUND_KEYS.length - 1][1]);
-}
+const fogScratch = new THREE.Color();
 
 function GroundColour() {
   useFrame((state, delta) => {
-    const target = groundAt(rig.progress, scratch);
-    const scene = state.scene;
-
-    if (!(scene.background instanceof THREE.Color)) {
-      scene.background = target.clone();
-      return;
-    }
-
-    // Damped, so a fast scroll eases rather than strobing.
+    const target = groundAt(rig.progress, fogScratch);
     const dt = Math.min(delta, 1 / 20);
-    scene.background.setRGB(
-      damp(scene.background.r, target.r, 6, dt),
-      damp(scene.background.g, target.g, 6, dt),
-      damp(scene.background.b, target.b, 6, dt),
-    );
-    // Fog has to track the ground or the far end of the tunnel keeps the old
-    // colour and leaves a seam where the two meet.
-    if (scene.fog instanceof THREE.Fog) scene.fog.color.copy(scene.background);
+    const fog = state.scene.fog;
+    if (fog instanceof THREE.Fog) {
+      fog.color.setRGB(
+        damp(fog.color.r, target.r, 6, dt),
+        damp(fog.color.g, target.g, 6, dt),
+        damp(fog.color.b, target.b, 6, dt),
+      );
+    }
   });
   return null;
 }
@@ -157,6 +116,7 @@ export default function Scene() {
       >
         <RevealBridge />
         <GroundColour />
+        <Backdrop />
         <CameraRig />
 
         <ambientLight intensity={0.35} />

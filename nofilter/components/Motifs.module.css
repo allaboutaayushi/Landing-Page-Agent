@@ -16,7 +16,8 @@
   position: absolute;
   height: auto;
   opacity: 0.9;
-  animation: twinkle 4.5s var(--ease-inout) infinite;
+  animation: twinkle 7s var(--ease-inout) infinite;
+  will-change: transform, opacity;
 }
 
 .cream {
@@ -30,15 +31,27 @@
 }
 
 /* A slow pulse rather than a blink — the mark should breathe, not flash. */
+/*
+ * Twinkle plus drift. A mark that only pulses in place reads mechanical; a
+ * little travel and rotation makes the field feel like it is floating rather
+ * than blinking. Each mark is offset by its own delay so they never sync up.
+ */
 @keyframes twinkle {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
     opacity: 0.9;
   }
-  50% {
-    transform: scale(0.82) rotate(12deg);
+  33% {
+    transform: translate3d(6px, -10px, 0) scale(0.84) rotate(14deg);
     opacity: 0.55;
+  }
+  66% {
+    transform: translate3d(-5px, -4px, 0) scale(1.06) rotate(-8deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    opacity: 0.9;
   }
 }
 
