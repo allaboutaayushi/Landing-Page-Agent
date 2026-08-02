@@ -26,18 +26,33 @@ export default function SignupsPage() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const load = async () => {
-    const res = await fetch('/api/signups', { cache: 'no-store' });
+  const PER = 50;
+
+  const load = async (which = page) => {
+    const res = await fetch(`/api/signups?page=${which}&per=${PER}`, { cache: 'no-store' });
     if (!res.ok) return false;
-    const body = (await res.json()) as { signups: Row[] };
+    const body = (await res.json()) as {
+      signups: Row[];
+      total: number;
+      pages: number;
+      page: number;
+    };
     setRows(body.signups);
+    setTotal(body.total);
+    setPages(body.pages);
+    setPage(body.page);
     return true;
   };
 
   // An unexpired cookie means no need to ask again.
   useEffect(() => {
-    load().catch(() => {});
+    load(1).catch(() => {});
+    // Only on mount; later loads are driven by the pager.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signIn = async (e: React.FormEvent) => {
@@ -105,7 +120,9 @@ export default function SignupsPage() {
     );
   }
 
-  // Health-check probes are ours, not real people — kept out of the count.
+  // Health-check probes are ours, not real people — kept off the page. The
+  // total comes from the server and counts everything, so it can read a little
+  // higher than the rows shown; that is the honest number to act on.
   const real = rows.filter((r) => r.source !== 'health-check');
 
   return (
@@ -114,7 +131,7 @@ export default function SignupsPage() {
         <div>
           <p className={s.kicker}>NO FILTER</p>
           <h1 className={s.heading}>
-            {real.length} {real.length === 1 ? 'signup' : 'signups'}
+            {total} {total === 1 ? 'signup' : 'signups'}
           </h1>
         </div>
         <div className={s.actions}>
@@ -127,7 +144,7 @@ export default function SignupsPage() {
         </div>
       </header>
 
-      {real.length === 0 ? (
+      {real.length === 0 && page === 1 ? (
         <p className={s.empty}>Nobody yet. Submit at the door and refresh this page.</p>
       ) : (
         <div className={s.tableWrap}>
@@ -154,6 +171,30 @@ export default function SignupsPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {pages > 1 && (
+        <nav className={s.pager} aria-label="Pages">
+          <button
+            className={s.ghost}
+            type="button"
+            onClick={() => load(page - 1)}
+            disabled={page <= 1}
+          >
+            ← Newer
+          </button>
+          <span className={s.dim}>
+            Page {page} of {pages}
+          </span>
+          <button
+            className={s.ghost}
+            type="button"
+            onClick={() => load(page + 1)}
+            disabled={page >= pages}
+          >
+            Older →
+          </button>
+        </nav>
       )}
     </main>
   );

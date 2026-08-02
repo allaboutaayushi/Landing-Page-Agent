@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { blobsConfigured, readAllSignups, toCsv } from '@/lib/server/store/blobs';
+import { blobsConfigured, readSignupPage, streamAllSignups, csvHeader, csvRow } from '@/lib/server/store/blobs';
 import { SESSION_COOKIE, cookieMatches } from './session/route';
 
 /** Needs Node crypto and the Blobs SDK, so not the edge runtime. */
@@ -54,10 +54,22 @@ export async function GET(request: Request) {
     );
   }
 
-  const rows = await readAllSignups();
-
+  // The export needs every row, so it streams rather than buffering the lot:
+  // the response starts before the last record is read, and memory stays flat
+  // however many signups have accumulated.
   if (url.searchParams.get('format') === 'csv') {
-    return new NextResponse(toCsv(rows), {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(encoder.encode(`${csvHeader()}\n`));
+        for await (const batch of streamAllSignups()) {
+          controller.enqueue(encoder.encode(batch.map(csvRow).join('\n') + '\n'));
+        }
+        controller.close();
+      },
+    });
+
+    return new NextResponse(stream, {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'Content-Disposition': 'attachment; filename="nofilter-signups.csv"',
@@ -66,8 +78,12 @@ export async function GET(request: Request) {
     });
   }
 
+  const per = Math.min(Math.max(Number(url.searchParams.get('per') ?? 50), 1), 200);
+  const page = Math.max(Number(url.searchParams.get('page') ?? 1), 1);
+  const { rows, total } = await readSignupPage((page - 1) * per, per);
+
   return NextResponse.json(
-    { count: rows.length, signups: rows },
+    { total, page, per, pages: Math.max(Math.ceil(total / per), 1), signups: rows },
     { headers: { 'Cache-Control': 'no-store' } },
   );
 }

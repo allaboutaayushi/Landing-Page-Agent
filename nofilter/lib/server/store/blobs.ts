@@ -65,35 +65,74 @@ export function createBlobsStore(): SignupStore | null {
 export type StoredSignup = Signup & { key: string };
 
 /**
- * Reads every signup back, newest first.
+ * Every key, newest first.
  *
- * Only ever called from the admin route, which refuses to run without a token.
+ * Listing returns keys only — no bodies — so this stays one cheap call however
+ * many signups exist. Keys begin with the ISO timestamp, so sorting the
+ * strings sorts chronologically without reading a single record.
  */
-export async function readAllSignups(): Promise<StoredSignup[]> {
-  const s = store();
-  const { blobs } = await s.list();
+async function keysNewestFirst(): Promise<string[]> {
+  const { blobs } = await store().list();
+  return blobs.map((b) => b.key).sort((a, b) => b.localeCompare(a));
+}
 
+/** How many signups exist, without fetching any of them. */
+export async function countSignups(): Promise<number> {
+  return (await keysNewestFirst()).length;
+}
+
+/** Fetches the bodies for a set of keys, dropping any that have gone missing. */
+async function fetchKeys(keys: string[]): Promise<StoredSignup[]> {
+  const s = store();
   const rows = await Promise.all(
-    blobs.map(async ({ key }) => {
+    keys.map(async (key) => {
       const value = (await s.get(key, { type: 'json' })) as Signup | null;
       return value ? { ...value, key } : null;
     }),
   );
+  return rows.filter((r): r is StoredSignup => r !== null);
+}
 
-  return rows
-    .filter((r): r is StoredSignup => r !== null)
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+/**
+ * One page of signups, newest first.
+ *
+ * Reading every record to show fifty of them was the ceiling on this page:
+ * one network round-trip per signup meant the function timed out somewhere
+ * around two thousand. Paging the keys first and fetching only the page being
+ * displayed makes the cost of a page view constant no matter how many signups
+ * have accumulated.
+ */
+export async function readSignupPage(
+  offset: number,
+  limit: number,
+): Promise<{ rows: StoredSignup[]; total: number }> {
+  const keys = await keysNewestFirst();
+  const rows = await fetchKeys(keys.slice(offset, offset + limit));
+  return { rows, total: keys.length };
+}
+
+/**
+ * Every signup, yielded in batches.
+ *
+ * Only for the CSV export, which genuinely needs all of them. Streaming in
+ * batches keeps the whole set from being held in memory at once, and lets the
+ * response start before the last record has been read.
+ */
+export async function* streamAllSignups(batchSize = 100): AsyncGenerator<StoredSignup[]> {
+  const keys = await keysNewestFirst();
+  for (let i = 0; i < keys.length; i += batchSize) {
+    yield await fetchKeys(keys.slice(i, i + batchSize));
+  }
 }
 
 /** Escaped so a name beginning = + - or @ cannot execute when opened in Excel. */
-export function toCsv(rows: StoredSignup[]) {
-  const cell = (value: string | boolean) => {
-    const str = String(value);
-    const safe = /^[=+\-@]/.test(str) ? `'${str}` : str;
-    return `"${safe.replace(/"/g, '""')}"`;
-  };
+const cell = (value: string | boolean) => {
+  const str = String(value);
+  const safe = /^[=+\-@]/.test(str) ? `'${str}` : str;
+  return `"${safe.replace(/"/g, '""')}"`;
+};
 
-  const header = SIGNUP_COLUMNS.join(',');
-  const body = rows.map((row) => SIGNUP_COLUMNS.map((c) => cell(row[c])).join(','));
-  return [header, ...body].join('\n');
-}
+export const csvHeader = () => SIGNUP_COLUMNS.join(',');
+
+export const csvRow = (row: StoredSignup) =>
+  SIGNUP_COLUMNS.map((c) => cell(row[c])).join(',');

@@ -198,3 +198,19 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Paging. Fifty at a time keeps a page view's cost constant no matter how
+   many signups have accumulated. */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.pager .ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
