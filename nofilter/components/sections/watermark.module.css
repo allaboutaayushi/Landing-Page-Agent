@@ -81,6 +81,52 @@
   opacity: 0.22;
 }
 
+/*
+ * Bubbles. Rise, swell, then go at the top.
+ *
+ * A ring rather than a disc — a filled circle in a lighter tone reads as a
+ * dot sitting on the liquid, where an outline reads as a shell of air with
+ * the water still visible through it. The pop is the last fifth: it expands
+ * fast and thins out at the same time, which is what separates bursting from
+ * simply fading.
+ */
+.bubble {
+  fill: color-mix(in srgb, var(--white) 38%, transparent);
+  stroke: var(--white);
+  stroke-width: 0.014em;
+  opacity: 0;
+  /* Without fill-box the origin resolves against the whole SVG, and every
+     bubble scales away from the wordmark's centre instead of its own. */
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation-name: bubbleRise;
+  animation-timing-function: cubic-bezier(0.35, 0, 0.5, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes bubbleRise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.45);
+  }
+  14% {
+    opacity: 0.9;
+  }
+  74% {
+    opacity: 0.9;
+    transform: translateY(var(--rise)) scale(1);
+  }
+  /* the burst */
+  88% {
+    opacity: 0.55;
+    transform: translateY(calc(var(--rise) * 1.05)) scale(1.65);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--rise) * 1.08)) scale(2.6);
+  }
+}
+
 /* Light moving under the surface. Slow and long — caustics that keep time with
    the ripples read as a pattern, not as light. */
 .caustics {
@@ -103,5 +149,8 @@
   }
   .caustics {
     animation: none;
+  }
+  .bubble {
+    display: none;
   }
 }

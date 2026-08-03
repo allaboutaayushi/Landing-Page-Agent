@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useStore } from '@/lib/store';
 import s from './watermark.module.css';
 
 /**
@@ -25,10 +26,42 @@ import s from './watermark.module.css';
 
 const LINES = ['NO', 'FILTER'];
 
-/** Where the surface sits before any scrolling — a shallow pool, not empty. */
+/** Where the surface starts — a shallow pool, not empty. */
 const REST_LEVEL = 0.07;
 /** Never quite 1, so the surface stays inside the letters and keeps moving. */
 const FULL_LEVEL = 0.99;
+/** How long the pour takes once the page is visible. */
+const FILL_MS = 2600;
+/** Bubbles run for this long after it is full, then stop for good. */
+const BUBBLE_MS = 2200;
+
+const easeOut = (p: number) => 1 - Math.pow(1 - p, 3);
+
+/*
+ * Hand-placed rather than random. A random scatter clusters and leaves gaps,
+ * and gaps read as a bug in something this short; these sit across the width
+ * with their sizes and delays deliberately uneven.
+ *
+ *   x    across the wordmark, as a percentage
+ *   r    radius, as a fraction of the type size
+ *   rise how far up the letters it travels before it goes
+ *   d    when it starts, in seconds
+ *   dur  how long it takes
+ */
+const BUBBLES = [
+  { x: 14, r: 0.075, rise: 0.62, d: 0.0, dur: 1.15 },
+  { x: 27, r: 0.05, rise: 0.78, d: 0.22, dur: 1.35 },
+  { x: 39, r: 0.1, rise: 0.55, d: 0.08, dur: 1.0 },
+  { x: 48, r: 0.058, rise: 0.72, d: 0.5, dur: 1.25 },
+  { x: 58, r: 0.045, rise: 0.84, d: 0.34, dur: 1.45 },
+  { x: 66, r: 0.088, rise: 0.6, d: 0.66, dur: 1.1 },
+  { x: 77, r: 0.055, rise: 0.75, d: 0.15, dur: 1.3 },
+  { x: 86, r: 0.072, rise: 0.66, d: 0.78, dur: 1.2 },
+  { x: 33, r: 0.042, rise: 0.8, d: 0.92, dur: 1.4 },
+  { x: 71, r: 0.047, rise: 0.7, d: 1.04, dur: 1.25 },
+  { x: 21, r: 0.062, rise: 0.68, d: 0.58, dur: 1.2 },
+  { x: 93, r: 0.045, rise: 0.74, d: 0.42, dur: 1.35 },
+];
 
 type Box = { x: number; y: number; w: number; h: number; line: number; size: number };
 
@@ -81,6 +114,38 @@ export default function WaterMark() {
   const [height, setHeight] = useState(0);
   const [shift, setShift] = useState(0);
 
+  // The timestamp the pour began, or 0 while the shell is still up. Held as a
+  // number rather than a flag so the loop can measure elapsed time from it.
+  const [entered, setEntered] = useState(0);
+  const [bubbling, setBubbling] = useState(false);
+
+  const shellOpen = useStore((st) => st.entered);
+
+  /*
+   * Guarded with a ref, not with the state it sets.
+   *
+   * Keying this off `entered` meant the effect re-ran the moment it stored the
+   * timestamp, and React tears down the previous run before the next — so the
+   * cleanup cancelled both timers a frame after they were set and the bubbles
+   * never arrived. The ref settles within the same tick and is not a dependency.
+   */
+  const startedRef = useRef(false);
+
+  useEffect(() => {
+    if (!shellOpen || startedRef.current) return;
+    startedRef.current = true;
+    setEntered(performance.now());
+
+    // Bubbles are the last beat, not a loop: they break the surface once the
+    // glass is full and then the wordmark is left alone.
+    const t1 = window.setTimeout(() => setBubbling(true), FILL_MS - 250);
+    const t2 = window.setTimeout(() => setBubbling(false), FILL_MS - 250 + BUBBLE_MS);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [shellOpen]);
+
   // --- measure ------------------------------------------------------------
   useEffect(() => {
     const svg = svgRef.current;
@@ -121,28 +186,27 @@ export default function WaterMark() {
   // --- animate ------------------------------------------------------------
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const hero = svgRef.current?.closest('section');
 
     let raf = 0;
     let level = REST_LEVEL;
     const start = performance.now();
+    // Pours from the moment the shell is off, not from a scroll position. The
+    // clock only starts once the page is actually visible — begun on mount it
+    // would run its whole length behind the preloader and be over before
+    // anyone saw the wordmark.
+    const pourFrom = entered ? entered : 0;
 
     const frame = (now: number) => {
       const b = boxRef.current;
       if (b) {
-        // Rises across the hero's own scroll, not the page's — the wordmark is
-        // full by the time the section has left.
-        let target = REST_LEVEL;
-        if (hero) {
-          const r = hero.getBoundingClientRect();
-          const travelled = clamp(-r.top / (r.height * 0.8));
-          target = REST_LEVEL + travelled * (FULL_LEVEL - REST_LEVEL);
+        if (reduced) {
+          level = FULL_LEVEL;
+        } else if (pourFrom) {
+          // Eased on elapsed time rather than chased toward a target: a pour
+          // has a beginning and an end, and a lerp never quite arrives.
+          const p = clamp((now - pourFrom) / FILL_MS);
+          level = REST_LEVEL + easeOut(p) * (FULL_LEVEL - REST_LEVEL);
         }
-
-        // Chased rather than set, so a flicked scroll arrives as a swell
-        // instead of a jump. Everything else here is already smooth; this is
-        // the one place a raw value would show.
-        level += (target - level) * 0.055;
 
         const t = reduced ? 0 : (now - start) / 1000;
         const amp = b.size * 0.035;
@@ -161,7 +225,7 @@ export default function WaterMark() {
 
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [box]);
+  }, [box, entered]);
 
   const lineY = box ? box.line : 0;
   /* Matches the 0.045em/0.09em pair the CSS wordmark used. */
@@ -287,6 +351,36 @@ export default function WaterMark() {
             <ellipse cx="58%" cy="78%" rx="22%" ry="6%" fill="var(--white)" opacity="0.1" />
             <ellipse cx="84%" cy="55%" rx="14%" ry="8%" fill="var(--teal)" opacity="0.12" />
           </g>
+
+          {/*
+            Bubbles. Inside the body mask so they are only ever seen through
+            water — one that outran the surface would otherwise pop in mid-air
+            above the line. Unmounted once they are done rather than left
+            paused, so nothing keeps a compositor layer alive for the rest of
+            the session.
+          */}
+          {bubbling && box && (
+            <g mask="url(#nf-wm-body)">
+              {BUBBLES.map((bub, i) => (
+                <circle
+                  key={i}
+                  className={s.bubble}
+                  /* Across the wordmark, not across the SVG. As a percentage
+                     of the element the outer bubbles landed in the empty
+                     margin either side of the type, where the letter mask
+                     hides them — half of them were never going to be seen. */
+                  cx={box.x + (box.w * bub.x) / 100}
+                  cy={box.y + box.h - box.size * 0.06}
+                  r={bub.r * box.size}
+                  style={{
+                    ['--rise' as string]: `${-(box.h * bub.rise)}px`,
+                    animationDelay: `${bub.d}s`,
+                    animationDuration: `${bub.dur}s`,
+                  }}
+                />
+              ))}
+            </g>
+          )}
 
           {/* The meniscus: a bright line riding the crest, with a soft one
               under it so the surface has thickness rather than being an edge. */}
