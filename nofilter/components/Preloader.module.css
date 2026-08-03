@@ -9,12 +9,28 @@
   pointer-events: none;
 }
 
-/* The ink is two slabs so it can split rather than dissolve. */
-.slab {
+/*
+ * The shell is one layer with a hole punched through it, not two slabs that
+ * part. The hole is a radial mask: transparent inside `--hole`, opaque a hair
+ * outside it, so growing that one length opens a clean circle. `--hole` is a
+ * registered property (see globals) — an unregistered custom property is a
+ * string as far as animation is concerned and would jump from 0 to done in a
+ * single frame instead of easing.
+ */
+.curtain {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 50.5%;
+  inset: 0;
+  --hole: 0%;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--hole),
+    #000 calc(var(--hole) + 1.2%)
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--hole),
+    #000 calc(var(--hole) + 1.2%)
+  );
   /*
    * Neon blue at 000, the page's red at 100, mixed on `--load`. Through oklab
    * rather than sRGB: the straight-line path between these two runs through a
@@ -23,32 +39,56 @@
    * anything without color-mix, and it is the blue rather than the red so a
    * browser that drops out still shows the intended opening.
    */
-  background: var(--blue-electric);
-  background: color-mix(
+  background-color: var(--blue-electric);
+  background-color: color-mix(
     in oklab,
     var(--red) calc(var(--load, 0) * 100%),
     var(--blue-electric)
   );
-  transition:
-    transform 1.05s var(--ease-inout),
-    background-color 0.3s linear;
-  will-change: transform;
+  transition: background-color 0.3s linear;
+  will-change: transform, mask-image;
 }
 
-.slab[data-half='top'] {
-  top: 0;
-  transform: translate3d(0, 0, 0);
-}
-.slab[data-half='bottom'] {
-  bottom: 0;
-  transform: translate3d(0, 0, 0);
+/*
+ * The hole opens and the shell pushes toward the camera at the same time. The
+ * scale is what turns this from a wipe into a zoom: without it the circle just
+ * grows on a flat plane, and the eye reads a shrinking ring rather than an
+ * opening you are moving through.
+ *
+ * 130% because the mask's percentages resolve against the farthest corner, so
+ * 100% only just clears it — and the shell is 1.7× by then, which pushes the
+ * corners further out again.
+ */
+/*
+ * A lit rim on the opening edge.
+ *
+ * By the time the shell opens the counter has taken it to the page's own red,
+ * so the hole is red on red and its edge is invisible — the zoom had nothing
+ * to read against. The rim is painted from the same `--hole` the mask is cut
+ * with, one gradient stop outside it, so the two cannot drift: whatever the
+ * mask is hiding, this is drawn immediately around. Only while opening, or it
+ * would sit as a dot in the middle of the loading screen.
+ */
+.root[data-stage='breaking'] .curtain {
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    transparent calc(var(--hole) + 0.4%),
+    var(--yellow) calc(var(--hole) + 1.1%),
+    color-mix(in srgb, var(--yellow) 45%, transparent) calc(var(--hole) + 2.2%),
+    transparent calc(var(--hole) + 5%)
+  );
+  animation: portalOpen 1.15s cubic-bezier(0.55, 0, 0.25, 1) forwards;
 }
 
-.root[data-stage='breaking'] .slab[data-half='top'] {
-  transform: translate3d(0, -100%, 0);
-}
-.root[data-stage='breaking'] .slab[data-half='bottom'] {
-  transform: translate3d(0, 100%, 0);
+@keyframes portalOpen {
+  from {
+    --hole: 0%;
+    transform: scale(1);
+  }
+  to {
+    --hole: 130%;
+    transform: scale(1.7);
+  }
 }
 
 .inner {
@@ -61,10 +101,12 @@
   transition: opacity 0.4s var(--ease-out), transform 0.7s var(--ease-inout);
 }
 
+/* The wordmark rushes past with the shell rather than fading in place, so the
+   whole layer leaves in one direction instead of two. */
 .root[data-stage='breaking'] .inner {
   opacity: 0;
-  transform: scale(1.06);
-  transition-duration: 0.35s, 0.6s;
+  transform: scale(2.1);
+  transition-duration: 0.42s, 0.85s;
 }
 
 .markWrap {

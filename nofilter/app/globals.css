@@ -335,6 +335,46 @@ img {
   z-index: 2;
 }
 
+/*
+ * The intro's portal.
+ *
+ * `--hole` drives the radius of the mask the preloader opens through itself.
+ * It has to be registered: an unregistered custom property is an untyped
+ * string to the animation engine, which cannot interpolate it — the hole would
+ * snap from shut to open in one frame. Declaring the syntax makes it a real
+ * length the browser can ease.
+ */
+@property --hole {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+/*
+ * The page sits slightly enlarged behind the shell and settles back as the
+ * shell opens, so you arrive by moving toward it rather than by having it
+ * revealed. Preloader stamps the stage on the root element and removes the
+ * attribute once it is done — a transform left in place would make `main` a
+ * containing block, and the stations below are sticky.
+ */
+html[data-intro='held'] .shell {
+  transform: scale(1.09);
+  transform-origin: 50% 42%;
+}
+
+html[data-intro='settling'] .shell {
+  transform: scale(1);
+  transform-origin: 50% 42%;
+  transition: transform 1.5s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] .shell {
+    transform: none;
+    transition: none;
+  }
+}
+
 .pad {
   padding-inline: var(--gutter);
 }
