@@ -17,25 +17,17 @@
   padding: clamp(5rem, 9vh, 6.5rem) var(--gutter) clamp(1.25rem, 3vh, 2rem);
 }
 
+/*
+ * Layout only. Colour, the offset shadow and the line spacing all moved into
+ * the SVG when the wordmark became a mask — a `color` or `text-shadow` here
+ * would apply to nothing, since there is no HTML text left inside it.
+ */
 .heroMark {
   grid-row: 1;
   align-self: center;
-  justify-self: center;
-  text-align: center;
-  display: grid;
-  gap: 0.06em;
-  line-height: 0.92;
-  /* The difference blend here existed to punch the wordmark through the glass
-     lens. With the canvas gone it would just invert the flat ground, so the
-     mark now carries the logo's own hard offset shadow instead. */
-  color: var(--yellow);
-  text-shadow:
-    0.045em 0.045em 0 var(--shadow),
-    0.09em 0.09em 0 var(--shadow);
-}
-
-.heroMarkLine {
-  display: block;
+  justify-self: stretch;
+  width: 100%;
+  margin: 0;
 }
 
 .scrollHint {

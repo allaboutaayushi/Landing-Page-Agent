@@ -2,10 +2,10 @@
 
 import { useRef } from 'react';
 import { HERO } from '@/lib/content';
-import { Chars } from '@/components/Reveal';
 import { cursorProps } from '@/components/Cursor';
 import { scrollTo } from '@/components/ScrollRig';
 import { SparkleField } from '@/components/Motifs';
+import WaterMark from './WaterMark';
 import s from './sections.module.css';
 
 export default function Hero() {
@@ -14,15 +14,12 @@ export default function Hero() {
   return (
     <section ref={ref} data-act="hero" data-skin="red" id="top" className={s.hero}>
       <SparkleField variant="hero" />
-      {/* The wordmark is the only thing at this size anywhere on the page. */}
-      <h1 className={`display wordmark ${s.heroMark}`}>
+      {/* The wordmark is the only thing at this size anywhere on the page. It
+          is drawn as SVG so the letterforms can be used as a mask — see
+          WaterMark. The heading itself stays here for the document outline. */}
+      <h1 className={s.heroMark}>
         <span className="sr-only">NO FILTER</span>
-        <span aria-hidden="true" className={s.heroMarkLine}>
-          <Chars text="NO" delay={0.15} start="top bottom" />
-        </span>
-        <span aria-hidden="true" className={s.heroMarkLine}>
-          <Chars text="FILTER" delay={0.24} start="top bottom" />
-        </span>
+        <WaterMark />
       </h1>
 
       {/* The wordmark carries the screen on its own — no lede, no sub, no CTA.
