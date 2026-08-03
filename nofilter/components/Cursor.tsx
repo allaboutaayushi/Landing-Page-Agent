@@ -31,10 +31,10 @@ const SPARK_TONES = [
   'var(--yellow)',
 ];
 
-const POOL = 30;
+const POOL = 54;
 /** Pointer travel between spawns. Time-based spawning gives a dense clot when
  *  the pointer stops; distance keeps the spacing even at any speed. */
-const SPAWN_EVERY = 18;
+const SPAWN_EVERY = 11;
 
 export default function Cursor() {
   const dot = useRef<HTMLDivElement>(null);

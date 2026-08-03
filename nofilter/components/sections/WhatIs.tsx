@@ -23,9 +23,15 @@ import s from './sections.module.css';
  * Ending on the outward sweep put the tip past the end of the line it is meant
  * to be pointing at, since the far edge of a block this wide sits beyond the
  * text inside it; turning back brings the tip over the words.
+ *
+ * That tail used to finish almost vertically while the curve visibly arrived
+ * from the upper right, so barbs squared to the true end tangent lay along the
+ * shaft and the head read as a tick rather than an arrow. It now runs out on
+ * the diagonal it looks like it is travelling, and the barbs are symmetric
+ * about that.
  */
 const SPIRAL =
-  'M16 44C96 6 190 14 252 54a34 34 0 1 1 42 24C372 116 470 104 546 66C596 41 618 92 570 118C540 146 448 150 440 180';
+  'M16 44C96 6 190 14 252 54a34 34 0 1 1 42 24C372 116 470 104 546 66C596 41 618 92 570 118C530 146 486 158 452 178';
 
 export default function WhatIs() {
   const driftRef = useRef<HTMLParagraphElement>(null);
@@ -85,7 +91,7 @@ export default function WhatIs() {
         />
         <path
           className={s.arrowHead}
-          d="M463 161l-23 19-10-28"
+          d="M482 182l-30-4 11-28"
           stroke="currentColor"
           strokeWidth="3.8"
           strokeLinecap="round"
