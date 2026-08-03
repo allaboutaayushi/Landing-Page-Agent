@@ -50,13 +50,15 @@
 }
 
 /*
- * The hole opens and the shell pushes toward the camera at the same time. The
+ * The hole opens and the shell rushes past the camera at the same time. The
  * scale is what turns this from a wipe into a zoom: without it the circle just
  * grows on a flat plane, and the eye reads a shrinking ring rather than an
- * opening you are moving through.
+ * opening it is moving through. 4.6× rather than something modest — at low
+ * multiples the shell reads as a frame widening, and only once it is leaving
+ * the viewport far faster than the hole is growing does it read as travel.
  *
  * 130% because the mask's percentages resolve against the farthest corner, so
- * 100% only just clears it — and the shell is 1.7× by then, which pushes the
+ * 100% only just clears it — and the shell is 4.6× by then, which pushes the
  * corners further out again.
  */
 /*
@@ -87,7 +89,7 @@
   }
   to {
     --hole: 130%;
-    transform: scale(1.7);
+    transform: scale(4.6);
   }
 }
 
@@ -105,8 +107,8 @@
    whole layer leaves in one direction instead of two. */
 .root[data-stage='breaking'] .inner {
   opacity: 0;
-  transform: scale(2.1);
-  transition-duration: 0.42s, 0.85s;
+  transform: scale(4.2);
+  transition-duration: 0.42s, 0.9s;
 }
 
 .markWrap {

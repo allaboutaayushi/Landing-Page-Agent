@@ -351,21 +351,31 @@ img {
 }
 
 /*
- * The page sits slightly enlarged behind the shell and settles back as the
- * shell opens, so you arrive by moving toward it rather than by having it
- * revealed. Preloader stamps the stage on the root element and removes the
- * attribute once it is done — a transform left in place would make `main` a
- * containing block, and the stations below are sticky.
+ * The page grows toward you as the shell opens.
+ *
+ * It starts small and comes up to size — the opposite of settling back from
+ * enlarged, which is what this did first and which reads as the camera pulling
+ * away at the exact moment it should be pushing in.
+ *
+ * The canvas is deliberately left out of this. Scaling it down shrinks the
+ * whole rendered frame, and the sky it draws is a gradient, so its edge showed
+ * as a seam across the middle of the portal against the flat ground behind.
+ * The canvas runs its own entrance anyway; the copy and the shell's rush carry
+ * the travel without dragging a visible boundary through the shot.
+ *
+ * Preloader stamps the stage on the root element and removes the attribute
+ * once it is done — a transform left in place would make `main` a containing
+ * block, and the stations below are sticky.
  */
 html[data-intro='held'] .shell {
-  transform: scale(1.09);
-  transform-origin: 50% 42%;
+  transform: scale(0.68);
+  transform-origin: 50% 45%;
 }
 
 html[data-intro='settling'] .shell {
   transform: scale(1);
-  transform-origin: 50% 42%;
-  transition: transform 1.5s var(--ease-out);
+  transform-origin: 50% 45%;
+  transition: transform 1.45s cubic-bezier(0.22, 1, 0.32, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
