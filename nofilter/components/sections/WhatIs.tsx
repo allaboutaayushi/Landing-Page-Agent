@@ -9,12 +9,23 @@ import StampHeading from './StampHeading';
 import s from './sections.module.css';
 
 /*
- * The arrow's coil, shared by the shaft and the spark so the two can never
- * drift apart. Three large-arc sweeps that each end lower than they start —
- * a descending corkscrew — then a short bezier easing out of the last loop
- * into the tip at (69, 202), which is where the arrowhead's vertex sits.
+ * The arrow's sweep, shared by the shaft and the spark so the two can never
+ * drift apart. It runs the width of the block rather than dropping down it:
+ * a long rise from the left, one loop turned over in the middle, then a fall
+ * to the right that lands on the lines below.
+ *
+ * The loop is a single large-arc sweep. Its end point sits down and to the
+ * right of its start, so the arc closes most of a revolution and comes out
+ * travelling the same way it went in — which is what keeps it reading as one
+ * continuous line with a knot in it rather than as two strokes meeting.
+ *
+ * The tail hooks back on itself rather than running straight off to the right.
+ * Ending on the outward sweep put the tip past the end of the line it is meant
+ * to be pointing at, since the far edge of a block this wide sits beyond the
+ * text inside it; turning back brings the tip over the words.
  */
-const SPIRAL = 'M104 8a30 30 0 1 1-3 54a30 30 0 1 1-3 54a26 26 0 1 1-3 46c-4 20-14 30-26 40';
+const SPIRAL =
+  'M16 44C96 6 190 14 252 54a34 34 0 1 1 42 24C372 116 470 104 546 66C596 41 618 92 570 118C540 146 448 150 440 180';
 
 export default function WhatIs() {
   const driftRef = useRef<HTMLParagraphElement>(null);
@@ -52,16 +63,14 @@ export default function WhatIs() {
         The head's vertex sits on the shaft's own end point, barbs swept back
         off the direction it arrives from, so the two read as one mark.
 
-        The coil is three elliptical arcs rather than beziers. Each one is a
-        large-arc sweep whose end point sits below its start, so it closes most
-        of a revolution and steps down — three of them stacked make a corkscrew
-        that descends. Writing this as cubics means guessing control points that
-        cross over themselves, and the guesses are what make hand-authored loops
-        come out lopsided.
+        The loop is an elliptical arc rather than a bezier. A large-arc sweep
+        closes most of a revolution on its own; written as cubics it would need
+        control points that cross over themselves, and guessing those is what
+        makes hand-authored loops come out lopsided.
       */}
       <svg
         className={s.arrow}
-        viewBox="0 0 150 232"
+        viewBox="0 0 630 195"
         fill="none"
         aria-hidden="true"
         focusable="false"
@@ -70,16 +79,16 @@ export default function WhatIs() {
           className={s.arrowPath}
           d={SPIRAL}
           stroke="currentColor"
-          strokeWidth="5.5"
+          strokeWidth="3.8"
           strokeLinecap="round"
           strokeLinejoin="round"
           pathLength={1}
         />
         <path
           className={s.arrowHead}
-          d="M95 200l-26 2 7-25"
+          d="M463 161l-23 19-10-28"
           stroke="currentColor"
-          strokeWidth="5.5"
+          strokeWidth="3.8"
           strokeLinecap="round"
           strokeLinejoin="round"
           pathLength={1}
@@ -94,7 +103,7 @@ export default function WhatIs() {
           className={s.arrowSpark}
           d={SPIRAL}
           stroke="currentColor"
-          strokeWidth="8"
+          strokeWidth="5.5"
           strokeLinecap="round"
           pathLength={1}
         />

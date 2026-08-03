@@ -678,11 +678,13 @@
 .arrow {
   grid-column: 1 / -1;
   justify-self: center;
-  width: clamp(120px, 15vw, 230px);
+  /* Broad, not tall. It runs the width of the block and reads as a line
+     travelling across the lines below rather than dropping onto them. */
+  width: min(100%, 1020px);
   height: auto;
-  /* Pulled tight at the bottom so the tip lands just off the first line
-     rather than pointing across empty space at it. */
-  margin-block: clamp(-2rem, -3vh, -1rem) clamp(-13rem, -14vh, -5rem);
+  /* Pulled tight at the bottom so the tip lands on the first line rather than
+     pointing across empty space at it. */
+  margin-block: clamp(-3rem, -4vh, -1rem) clamp(-9rem, -11vh, -3.5rem);
   color: var(--white);
   overflow: visible;
   animation: arrowSway 7s ease-in-out infinite;
@@ -742,6 +744,22 @@
   }
 }
 
+/*
+ * The stroke scales with the mark, which is right on desktop and too fine on a
+ * phone — at 390px the shaft comes out barely two pixels and reads as a scratch
+ * rather than a drawn line. These are user units against the same viewBox, so
+ * they land at roughly the painted weight the desktop version has.
+ */
+@media (max-width: 860px) {
+  .arrowPath,
+  .arrowHead {
+    stroke-width: 7;
+  }
+  .arrowSpark {
+    stroke-width: 10;
+  }
+}
+
 /* Lights on leaving the top, out as it reaches the tip. */
 @keyframes sparkFade {
   0% {
@@ -758,14 +776,18 @@
   }
 }
 
-/* A slow lean, so it never sits perfectly still against the moving lines. */
+/*
+ * A slow lean, so it never sits perfectly still against the moving lines.
+ * Barely any rotation now it is a wide mark: the same 3.5deg that read as a
+ * gentle tilt on a tall coil swings the far end of this one clean off screen.
+ */
 @keyframes arrowSway {
   0%,
   100% {
     transform: rotate(0deg) translateY(0);
   }
   50% {
-    transform: rotate(3.5deg) translateY(8px);
+    transform: rotate(0.8deg) translateY(6px);
   }
 }
 
