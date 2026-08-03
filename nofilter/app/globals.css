@@ -82,6 +82,15 @@
   --green-neon: #2fe06e;
   --blue-neon: #5ad8f0;
 
+  /*
+   * A second blue, for the one place the colour is the ground rather than the
+   * mark on it. #5ad8f0 works as a bright line over red, but as a full screen
+   * it sits at almost the same brightness as the cream type — the wordmark
+   * washed out completely. This one is dark enough to carry cream at 4.6:1
+   * while still reading unmistakably neon.
+   */
+  --blue-electric: #1f51ff;
+
   /* --- roles ------------------------------------------------------------ */
   /* Ground and ink are swapped per section by [data-skin]; these are defaults. */
   --ground: var(--red);
@@ -105,7 +114,9 @@
 
   /* Fluid scale. The reference keeps only two loud sizes — a page-wide
      wordmark and a section head — everything else is quiet. */
-  --t-wordmark: clamp(3.25rem, 13vw, 14rem);
+  /* The hero is the page's main event and the wordmark is the whole of it —
+     sized to carry the screen rather than to sit politely in the middle. */
+  --t-wordmark: clamp(4rem, 20vw, 22rem);
   --t-display: clamp(2.4rem, 7vw, 7rem);
   --t-section: clamp(2rem, 5.4vw, 5.25rem);
   --t-station: clamp(1.75rem, 4.6vw, 4.25rem);
@@ -324,6 +335,56 @@ img {
 .shell {
   position: relative;
   z-index: 2;
+}
+
+/*
+ * The intro's portal.
+ *
+ * `--hole` drives the radius of the mask the preloader opens through itself.
+ * It has to be registered: an unregistered custom property is an untyped
+ * string to the animation engine, which cannot interpolate it — the hole would
+ * snap from shut to open in one frame. Declaring the syntax makes it a real
+ * length the browser can ease.
+ */
+@property --hole {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+/*
+ * The page grows toward you as the shell opens.
+ *
+ * It starts small and comes up to size — the opposite of settling back from
+ * enlarged, which is what this did first and which reads as the camera pulling
+ * away at the exact moment it should be pushing in.
+ *
+ * The canvas is deliberately left out of this. Scaling it down shrinks the
+ * whole rendered frame, and the sky it draws is a gradient, so its edge showed
+ * as a seam across the middle of the portal against the flat ground behind.
+ * The canvas runs its own entrance anyway; the copy and the shell's rush carry
+ * the travel without dragging a visible boundary through the shot.
+ *
+ * Preloader stamps the stage on the root element and removes the attribute
+ * once it is done — a transform left in place would make `main` a containing
+ * block, and the stations below are sticky.
+ */
+html[data-intro='held'] .shell {
+  transform: scale(0.68);
+  transform-origin: 50% 45%;
+}
+
+html[data-intro='settling'] .shell {
+  transform: scale(1);
+  transform-origin: 50% 45%;
+  transition: transform 1.45s cubic-bezier(0.22, 1, 0.32, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro] .shell {
+    transform: none;
+    transition: none;
+  }
 }
 
 .pad {

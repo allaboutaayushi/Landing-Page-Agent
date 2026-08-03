@@ -1,0 +1,129 @@
+/*
+ * The hero wordmark and the liquid inside it.
+ *
+ * Everything that moves is drawn behind a mask made of the letterforms, so the
+ * type itself is never touched — no filter, no displacement, no blur lands on
+ * the glyph edges. That is what keeps it readable at every fill level.
+ */
+
+.root {
+  display: block;
+  width: 100%;
+  /*
+   * Set on the root, not just on the text, so every `em` inside the artwork
+   * resolves against the wordmark's size. The crest and the keyline are not
+   * text and would otherwise measure their strokes against the inherited body
+   * size — a quarter of a pixel against a 14rem wordmark.
+   */
+  font-size: var(--t-wordmark);
+  /* Height is measured and set inline; this only covers the first paint,
+     before the display face has resolved and the box can be read. */
+  min-height: 1px;
+  overflow: visible;
+}
+
+/*
+ * The same clamp the CSS wordmark used. The SVG has no viewBox precisely so
+ * this can stay in charge of the size — with one, the type would be scaled to
+ * whatever box the artwork happened to need and the hero's scale would drift
+ * away from the rest of the page.
+ */
+.type {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--t-wordmark);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+/* The offset shadow the CSS wordmark carried, so the mark still punches off
+   the red while its middle is mostly empty. */
+.shadow {
+  fill: var(--shadow);
+}
+
+.outline {
+  stroke: var(--yellow);
+  /* In em, so the keyline tracks the clamp rather than going hairline on a
+     14rem wordmark and slab-thick on a 3rem one. */
+  stroke-width: 0.024em;
+  paint-order: stroke;
+}
+
+/*
+ * No filter on this group, deliberately.
+ *
+ * It carried an feTurbulence displacement for refraction. That re-evaluates on
+ * every frame the surface moves, over a region that tripled when the wordmark
+ * went to 20vw, and it was the single thing making the hero drop frames. The
+ * waves, the meniscus and the gradient carry the liquid on their own; a
+ * beautiful effect that costs the page its smoothness is not worth having.
+ */
+
+/* The surface. Two strokes: a wide soft one for thickness, a fine bright one
+   for the meniscus itself. A single line reads as a cut edge. */
+.crest {
+  stroke: var(--cream);
+  stroke-width: 0.016em;
+  stroke-linecap: round;
+  opacity: 0.95;
+}
+
+.crestGlow {
+  stroke: var(--white);
+  stroke-width: 0.055em;
+  stroke-linecap: round;
+  opacity: 0.22;
+}
+
+/*
+ * Bubbles. Rise, swell, then go at the top.
+ *
+ * A ring rather than a disc — a filled circle in a lighter tone reads as a
+ * dot sitting on the liquid, where an outline reads as a shell of air with
+ * the water still visible through it. The pop is the last fifth: it expands
+ * fast and thins out at the same time, which is what separates bursting from
+ * simply fading.
+ */
+.bubble {
+  fill: color-mix(in srgb, var(--white) 38%, transparent);
+  stroke: var(--white);
+  stroke-width: 0.014em;
+  opacity: 0;
+  /* Without fill-box the origin resolves against the whole SVG, and every
+     bubble scales away from the wordmark's centre instead of its own. */
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation-name: bubbleRise;
+  animation-timing-function: cubic-bezier(0.35, 0, 0.5, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes bubbleRise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.45);
+  }
+  14% {
+    opacity: 0.9;
+  }
+  74% {
+    opacity: 0.9;
+    transform: translateY(var(--rise)) scale(1);
+  }
+  /* the burst */
+  88% {
+    opacity: 0.55;
+    transform: translateY(calc(var(--rise) * 1.05)) scale(1.65);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--rise) * 1.08)) scale(2.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    display: none;
+  }
+}

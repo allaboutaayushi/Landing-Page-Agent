@@ -234,8 +234,13 @@ export default function Capture() {
             </p>
           ) : (
             <>
-              <p className={`lede ${s.lede}`}>{drawAsGate ? GATE.lede : CAPTURE.lede}</p>
-              {!drawAsGate && <p className={`${s.sub} dim`}>{CAPTURE.sub}</p>}
+              {/* The gate runs on its heading alone — see GATE in lib/content. */}
+              {!drawAsGate && (
+                <>
+                  <p className={`lede ${s.lede}`}>{CAPTURE.lede}</p>
+                  <p className={`${s.sub} dim`}>{CAPTURE.sub}</p>
+                </>
+              )}
 
               <form className={s.form} onSubmit={submit} noValidate>
                 <div className={s.field}>

@@ -17,50 +17,17 @@
   padding: clamp(5rem, 9vh, 6.5rem) var(--gutter) clamp(1.25rem, 3vh, 2rem);
 }
 
+/*
+ * Layout only. Colour, the offset shadow and the line spacing all moved into
+ * the SVG when the wordmark became a mask — a `color` or `text-shadow` here
+ * would apply to nothing, since there is no HTML text left inside it.
+ */
 .heroMark {
   grid-row: 1;
   align-self: center;
-  justify-self: center;
-  text-align: center;
-  display: grid;
-  gap: 0.06em;
-  line-height: 0.92;
-  /* The difference blend here existed to punch the wordmark through the glass
-     lens. With the canvas gone it would just invert the flat ground, so the
-     mark now carries the logo's own hard offset shadow instead. */
-  color: var(--yellow);
-  text-shadow:
-    0.045em 0.045em 0 var(--shadow),
-    0.09em 0.09em 0 var(--shadow);
-}
-
-.heroMarkLine {
-  display: block;
-}
-
-.heroMeta {
-  grid-row: 2;
-  max-width: 34ch;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.heroLede {
-  text-wrap: balance;
-  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
-}
-
-.heroSub {
-  font-size: 1rem;
-  line-height: 1.5;
-  max-width: 46ch;
-  text-shadow: 0 0 0.5em var(--ground), 0 0 1.2em var(--ground);
-}
-
-.heroCta {
-  position: absolute;
-  right: var(--gutter);
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  justify-self: stretch;
+  width: 100%;
+  margin: 0;
 }
 
 .scrollHint {
@@ -204,10 +171,6 @@
      mid-column with nothing above it; closing that distance makes the copy
      read as belonging to the heading rather than to the lines below. */
   margin-top: clamp(-9rem, -7vh, -3rem);
-}
-
-.whatIsLede {
-  max-width: 26ch;
 }
 
 .whatIsCopy {
@@ -574,16 +537,6 @@
     grid-column: 2;
   }
 
-  .heroCta {
-    position: static;
-    justify-self: start;
-    margin-top: 1.5rem;
-  }
-
-  .heroMeta {
-    gap: 0.6rem;
-  }
-
   .scrollHint {
     display: none;
   }
@@ -678,11 +631,13 @@
 .arrow {
   grid-column: 1 / -1;
   justify-self: center;
-  width: clamp(120px, 15vw, 230px);
+  /* Broad, not tall. It runs the width of the block and reads as a line
+     travelling across the lines below rather than dropping onto them. */
+  width: min(100%, 1020px);
   height: auto;
-  /* Pulled tight at the bottom so the tip lands just off the first line
-     rather than pointing across empty space at it. */
-  margin-block: clamp(-2rem, -3vh, -1rem) clamp(-13rem, -14vh, -5rem);
+  /* Pulled tight at the bottom so the tip lands on the first line rather than
+     pointing across empty space at it. */
+  margin-block: clamp(-3rem, -4vh, -1rem) clamp(-9rem, -11vh, -3.5rem);
   color: var(--white);
   overflow: visible;
   animation: arrowSway 7s ease-in-out infinite;
@@ -698,12 +653,14 @@
 .arrowHead {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: arrowDraw 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Slower than the single wiggle it replaced — the coil is roughly twice the
+     length, and at the old duration it whipped on rather than unwinding. */
+  animation: arrowDraw 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* The head waits for the shaft, so the arrow arrives pointing somewhere. */
 .arrowHead {
-  animation-delay: 1.1s;
+  animation-delay: 1.9s;
   animation-duration: 0.5s;
 }
 
@@ -713,14 +670,80 @@
   }
 }
 
-/* A slow lean, so it never sits perfectly still against the moving lines. */
+/*
+ * The travelling spark.
+ *
+ * One very short dash on a path normalised to length 1, so walking the offset
+ * across a full period drives that dash from the top of the coil to the tip.
+ * A single dash, not a chase: the gap is the rest of the path, so only one
+ * point is ever lit.
+ *
+ * It starts after the shaft and head have both landed — a spark running down a
+ * line that is still drawing itself reads as two unrelated animations.
+ */
+.arrowSpark {
+  /* Neon blue rather than the arrow's own white, so the light reads as
+     something travelling along the line instead of a bright patch of it. */
+  stroke: var(--blue-neon);
+  stroke-dasharray: 0.035 0.965;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px currentColor);
+  animation:
+    sparkRun 2.8s linear 2.5s infinite,
+    sparkFade 2.8s linear 2.5s infinite;
+}
+
+@keyframes sparkRun {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * The stroke scales with the mark, which is right on desktop and too fine on a
+ * phone — at 390px the shaft comes out barely two pixels and reads as a scratch
+ * rather than a drawn line. These are user units against the same viewBox, so
+ * they land at roughly the painted weight the desktop version has.
+ */
+@media (max-width: 860px) {
+  .arrowPath,
+  .arrowHead {
+    stroke-width: 7;
+  }
+  .arrowSpark {
+    stroke-width: 10;
+  }
+}
+
+/* Lights on leaving the top, out as it reaches the tip. */
+@keyframes sparkFade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*
+ * A slow lean, so it never sits perfectly still against the moving lines.
+ * Barely any rotation now it is a wide mark: the same 3.5deg that read as a
+ * gentle tilt on a tall coil swings the far end of this one clean off screen.
+ */
 @keyframes arrowSway {
   0%,
   100% {
     transform: rotate(0deg) translateY(0);
   }
   50% {
-    transform: rotate(3.5deg) translateY(8px);
+    transform: rotate(0.8deg) translateY(6px);
   }
 }
 
@@ -732,5 +755,8 @@
   .arrowHead {
     stroke-dashoffset: 0;
     animation: none;
+  }
+  .arrowSpark {
+    display: none;
   }
 }
