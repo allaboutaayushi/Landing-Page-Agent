@@ -81,7 +81,7 @@ function surface(box: Box, level: number, t: number, amp: number, freq: number, 
   const right = box.x + box.w + 14;
   const y0 = bottom - (bottom - top) * level;
 
-  const steps = 30;
+  const steps = 20;
   let body = `M ${left.toFixed(1)} ${y0.toFixed(1)}`;
   let crest = body;
 
@@ -105,7 +105,6 @@ export default function WaterMark() {
   const deepRef = useRef<SVGPathElement>(null);
   const crestRef = useRef<SVGPathElement>(null);
   const crestGlowRef = useRef<SVGPathElement>(null);
-  const clipRef = useRef<SVGPathElement>(null);
 
   // Held in a ref as well as in state: state drives the render, the ref is
   // what the animation loop reads without re-subscribing every measurement.
@@ -196,9 +195,28 @@ export default function WaterMark() {
     // anyone saw the wordmark.
     const pourFrom = entered ? entered : 0;
 
+    /*
+     * Full rate while it is pouring, half after, then nothing at all.
+     *
+     * The pour is the part anyone watches and a dropped frame there is visible,
+     * so it gets every frame. After it, thirty updates a second is
+     * indistinguishable from sixty on a surface that is only breathing at the
+     * very top of the letters.
+     *
+     * And once the bubbles are done the loop stops outright. Redrawing four
+     * paths behind a mask the size of the whole hero, forever, for a ripple
+     * nobody is looking at any more, is the kind of cost that is invisible in
+     * isolation and obvious once the page has to do anything else at the same
+     * time. The last frame stays on screen; it just stops being recomputed.
+     */
+    let tick = 0;
+    const stopAt = pourFrom ? pourFrom + FILL_MS + BUBBLE_MS + 900 : Infinity;
+
     const frame = (now: number) => {
       const b = boxRef.current;
-      if (b) {
+      const settled = pourFrom !== 0 && now - pourFrom > FILL_MS;
+      const done = now > stopAt;
+      if (b && !(settled && ++tick % 2)) {
         if (reduced) {
           level = FULL_LEVEL;
         } else if (pourFrom) {
@@ -215,11 +233,11 @@ export default function WaterMark() {
         const under = surface(b, level - 0.012, t * 0.8, amp * 0.75, 2.4, 2.1);
 
         bodyRef.current?.setAttribute('d', main.body);
-        clipRef.current?.setAttribute('d', main.body);
         deepRef.current?.setAttribute('d', under.body);
         crestRef.current?.setAttribute('d', main.crest);
         crestGlowRef.current?.setAttribute('d', main.crest);
       }
+      if (done) return;
       raf = requestAnimationFrame(frame);
     };
 
@@ -252,12 +270,6 @@ export default function WaterMark() {
               </tspan>
             </text>
           </g>
-        </mask>
-
-        {/* Highlights are clipped to the water itself so none of them float in
-            the empty part of a letter. */}
-        <mask id="nf-wm-body">
-          <path ref={clipRef} fill="#fff" />
         </mask>
 
         {/*
@@ -308,16 +320,6 @@ export default function WaterMark() {
           <stop offset="100%" stopColor="var(--yellow)" stopOpacity="0.28" />
         </linearGradient>
 
-        {/*
-         * Refraction. A coarse turbulence displacing only what is behind the
-         * letters — one octave and a low frequency, because this re-evaluates
-         * on every frame the surface moves and a fine noise field at wordmark
-         * size is the one thing here that would cost real time.
-         */}
-        <filter id="nf-wm-refract" x="-15%" y="-15%" width="130%" height="130%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.008 0.028" numOctaves="1" seed="9" result="n" />
-          <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
       </defs>
 
       {/* The offset shadow the CSS wordmark carried, kept so the mark still
@@ -344,14 +346,6 @@ export default function WaterMark() {
           <path ref={deepRef} fill="url(#nf-wm-deep)" opacity="0.75" />
           <path ref={bodyRef} fill="url(#nf-wm-fill)" />
 
-          {/* Light moving under the surface. Masked by the water body so it
-              cannot appear above the line. */}
-          <g mask="url(#nf-wm-body)" className={s.caustics}>
-            <ellipse cx="22%" cy="62%" rx="16%" ry="7%" fill="var(--cream)" opacity="0.16" />
-            <ellipse cx="58%" cy="78%" rx="22%" ry="6%" fill="var(--white)" opacity="0.1" />
-            <ellipse cx="84%" cy="55%" rx="14%" ry="8%" fill="var(--teal)" opacity="0.12" />
-          </g>
-
           {/*
             Bubbles. Inside the body mask so they are only ever seen through
             water — one that outran the surface would otherwise pop in mid-air
@@ -360,7 +354,7 @@ export default function WaterMark() {
             the session.
           */}
           {bubbling && box && (
-            <g mask="url(#nf-wm-body)">
+            <g>
               {BUBBLES.map((bub, i) => (
                 <circle
                   key={i}

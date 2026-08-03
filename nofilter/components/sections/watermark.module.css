@@ -51,19 +51,14 @@
 }
 
 /*
- * Refraction, on what shows through the letters — never on the letters.
- * Turned off where it would cost more than it returns: phones, and anyone who
- * has asked for less motion.
+ * No filter on this group, deliberately.
+ *
+ * It carried an feTurbulence displacement for refraction. That re-evaluates on
+ * every frame the surface moves, over a region that tripled when the wordmark
+ * went to 20vw, and it was the single thing making the hero drop frames. The
+ * waves, the meniscus and the gradient carry the liquid on their own; a
+ * beautiful effect that costs the page its smoothness is not worth having.
  */
-.water {
-  filter: url(#nf-wm-refract);
-}
-
-@media (max-width: 720px) {
-  .water {
-    filter: none;
-  }
-}
 
 /* The surface. Two strokes: a wide soft one for thickness, a fine bright one
    for the meniscus itself. A single line reads as a cut edge. */
@@ -127,29 +122,7 @@
   }
 }
 
-/* Light moving under the surface. Slow and long — caustics that keep time with
-   the ripples read as a pattern, not as light. */
-.caustics {
-  animation: drift 13s ease-in-out infinite alternate;
-  transform-origin: 50% 50%;
-}
-
-@keyframes drift {
-  from {
-    transform: translate3d(-2.5%, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(2.5%, -1.5%, 0) scale(1.06);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .water {
-    filter: none;
-  }
-  .caustics {
-    animation: none;
-  }
   .bubble {
     display: none;
   }

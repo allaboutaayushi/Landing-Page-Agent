@@ -31,7 +31,7 @@ const SPARK_TONES = [
   'var(--yellow)',
 ];
 
-const POOL = 46;
+const POOL = 30;
 /** Pointer travel between spawns. Time-based spawning gives a dense clot when
  *  the pointer stops; distance keeps the spacing even at any speed. */
 const SPAWN_EVERY = 18;
@@ -93,9 +93,12 @@ export default function Cursor() {
       const jx = px + (Math.random() - 0.5) * 18 - size / 2;
       const jy = py + (Math.random() - 0.5) * 18 - size / 2;
 
+      // Size only. The colour is baked into each pooled element at mount —
+      // writing `background` on every spawn dirties style on an element the
+      // compositor is already animating, and the tone does not need to change
+      // for the trail to read as varied.
       el.style.width = `${size}px`;
       el.style.height = `${size}px`;
-      el.style.background = SPARK_TONES[Math.floor(Math.random() * SPARK_TONES.length)];
 
       el.animate(
         [
@@ -169,7 +172,7 @@ export default function Cursor() {
       */}
       <div ref={sparkLayer} className={s.sparks} aria-hidden="true">
         {Array.from({ length: POOL }, (_, i) => (
-          <i key={i} className={s.spark} />
+          <i key={i} className={s.spark} style={{ background: SPARK_TONES[i % SPARK_TONES.length] }} />
         ))}
       </div>
 
