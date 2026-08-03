@@ -39,7 +39,6 @@ export default function WhatIs() {
       </header>
 
       <div className={s.whatIsBody}>
-        <Lines lines={[WHAT_IS.lede]} className={`lede ${s.whatIsLede}`} />
         <p ref={driftRef} className={`${s.whatIsCopy} dim`}>
           {WHAT_IS.body}
         </p>

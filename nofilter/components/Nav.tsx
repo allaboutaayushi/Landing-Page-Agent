@@ -15,7 +15,6 @@ import s from './Nav.module.css';
  */
 export default function Nav() {
   const entered = useStore((st) => st.entered);
-  const openCapture = useStore((st) => st.openCapture);
   const root = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -73,15 +72,6 @@ export default function Nav() {
           </a>
         ))}
       </nav>
-
-      <button
-        type="button"
-        className={`micro ${s.cta}`}
-        onClick={openCapture}
-        {...cursorProps('hover', 'GET IN')}
-      >
-        GET IN
-      </button>
     </header>
   );
 }

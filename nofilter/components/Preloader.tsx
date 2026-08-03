@@ -45,7 +45,17 @@ export default function Preloader() {
   if (stage === 'gone') return null;
 
   return (
-    <div className={s.root} data-stage={stage} role="status" aria-live="polite">
+    <div
+      className={s.root}
+      data-stage={stage}
+      role="status"
+      aria-live="polite"
+      /* Drives the slab colour. The shell opens neon blue and bleeds to red as
+         the count climbs, so it is already the page's own red by the time it
+         splits — the colour is the progress bar, and the hand-off has nothing
+         left to cut between. */
+      style={{ ['--load' as string]: loadProgress }}
+    >
       <span className="sr-only">
         {pct < 100 ? `Loading NO FILTER, ${pct} percent` : 'Loaded'}
       </span>

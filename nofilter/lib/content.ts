@@ -4,15 +4,11 @@ export const BRAND = 'NO FILTER';
 
 export const HERO = {
   wordmark: ['NO', 'FILTER'],
-  lede: 'Imagine if everything you’re into happened in one place.',
-  sub: 'Music, nightlife, creators, fashion, food, art and interactive experiences — without being divided into separate worlds.',
-  cta: 'GET IN',
   scrollHint: 'SCROLL',
 } as const;
 
 export const WHAT_IS = {
   heading: 'WHAT IS NO FILTER?',
-  lede: 'Imagine if everything you’re into happened in one place.',
   body: 'NO FILTER is a new-age pop culture experience where music, nightlife, creators, fashion, food, art and interactive experiences come together — without being divided into separate worlds.',
   /** Each statement lands as its own scroll beat, the way the reference isolates a line per camera move. */
   statements: [
@@ -163,14 +159,14 @@ export const CAPTURE = {
 
 /**
  * Wording for the door — the same form, but shown before the page is legible
- * rather than after a deliberate press. It gets its own copy because a gate has
- * to say what it wants and why in the first line; the GET IN version can afford
- * to open with a tease, having already been asked for.
+ * rather than after a deliberate press. It carries no lede: the heading and the
+ * two fields say everything the gate needs to, and a sentence explaining itself
+ * only delays the thing it is explaining. The GET IN version keeps its lede,
+ * having been opened on purpose rather than met on arrival.
  */
 export const GATE = {
   eyebrow: 'THE DOOR',
   heading: 'NAME ON THE LIST.',
-  lede: 'NO FILTER opens to people, not traffic. Two lines and the room is yours.',
   cta: 'OPEN THE ROOM →',
 } as const;
 

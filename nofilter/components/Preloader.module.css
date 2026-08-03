@@ -15,8 +15,23 @@
   left: 0;
   right: 0;
   height: 50.5%;
-  background: var(--red);
-  transition: transform 1.05s var(--ease-inout);
+  /*
+   * Neon blue at 000, the page's red at 100, mixed on `--load`. Through oklab
+   * rather than sRGB: the straight-line path between these two runs through a
+   * dead grey around halfway, where oklab keeps the chroma up and travels
+   * blue → violet → magenta → red. The plain colour is the fallback for
+   * anything without color-mix, and it is the blue rather than the red so a
+   * browser that drops out still shows the intended opening.
+   */
+  background: var(--blue-electric);
+  background: color-mix(
+    in oklab,
+    var(--red) calc(var(--load, 0) * 100%),
+    var(--blue-electric)
+  );
+  transition:
+    transform 1.05s var(--ease-inout),
+    background-color 0.3s linear;
   will-change: transform;
 }
 

@@ -82,6 +82,15 @@
   --green-neon: #2fe06e;
   --blue-neon: #5ad8f0;
 
+  /*
+   * A second blue, for the one place the colour is the ground rather than the
+   * mark on it. #5ad8f0 works as a bright line over red, but as a full screen
+   * it sits at almost the same brightness as the cream type — the wordmark
+   * washed out completely. This one is dark enough to carry cream at 4.6:1
+   * while still reading unmistakably neon.
+   */
+  --blue-electric: #1f51ff;
+
   /* --- roles ------------------------------------------------------------ */
   /* Ground and ink are swapped per section by [data-skin]; these are defaults. */
   --ground: var(--red);
