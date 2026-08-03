@@ -69,13 +69,17 @@
 
   /* --- neon lifts -------------------------------------------------------- */
   /*
-   * The deck's pink and teal at full saturation, for the one place on the page
-   * that has to read as lit rather than printed. Both are the deck hue with the
-   * value pushed up, not new colours: the pink keeps #e13894's hue and gains
-   * brightness, and the teal is walked toward blue until it separates from the
-   * red ground. Used only by the closer — everywhere else takes the deck values.
+   * Deck hues with the value pushed up, for the one place on the page that has
+   * to read as lit rather than printed. These are the deck colours brightened,
+   * not new ones — used only by the closer, everywhere else takes the deck.
+   *
+   * Chosen on luminance against the red ground rather than on hue. Pink was the
+   * obvious pick for the middle line and it does not work: #e13894 sits within
+   * a whisker of #ed1c25 in brightness, so however saturated it gets it reads
+   * as red-on-red — about 1.3:1, against 2.5:1 for the yellow either side of
+   * it. Green is the furthest deck hue from the ground in both directions.
    */
-  --pink-neon: #f5479f;
+  --green-neon: #2fe06e;
   --blue-neon: #5ad8f0;
 
   /* --- roles ------------------------------------------------------------ */
