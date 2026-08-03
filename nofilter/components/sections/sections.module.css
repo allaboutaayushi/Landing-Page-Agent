@@ -294,16 +294,22 @@
   display: block;
 }
 
-/* One colour per denial — the three lines are the loudest colour moment on
-   the page, and the only place three hues appear together. */
+/*
+ * One colour per denial — the three lines are the loudest colour moment on the
+ * page, and the only place three hues appear together.
+ *
+ * All three are picked to fight the red ground rather than sit in it. The old
+ * set opened on red-on-red and closed on purple, which the ground swallowed
+ * whole; yellow, neon pink and neon blue each hold their own against it.
+ */
 .closerKicks :global(.line-mask):nth-child(1) .closerKick {
-  color: var(--red);
+  color: var(--yellow);
 }
 .closerKicks :global(.line-mask):nth-child(2) .closerKick {
-  color: var(--pink);
+  color: var(--pink-neon);
 }
 .closerKicks :global(.line-mask):nth-child(3) .closerKick {
-  color: var(--purple);
+  color: var(--blue-neon);
 }
 
 /* --------------------------------------------------- experience */

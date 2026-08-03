@@ -67,6 +67,17 @@
   --purple: #602a7d;
   --orange: #f26622;
 
+  /* --- neon lifts -------------------------------------------------------- */
+  /*
+   * The deck's pink and teal at full saturation, for the one place on the page
+   * that has to read as lit rather than printed. Both are the deck hue with the
+   * value pushed up, not new colours: the pink keeps #e13894's hue and gains
+   * brightness, and the teal is walked toward blue until it separates from the
+   * red ground. Used only by the closer — everywhere else takes the deck values.
+   */
+  --pink-neon: #f5479f;
+  --blue-neon: #5ad8f0;
+
   /* --- roles ------------------------------------------------------------ */
   /* Ground and ink are swapped per section by [data-skin]; these are defaults. */
   --ground: var(--red);
