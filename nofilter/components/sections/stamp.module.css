@@ -146,30 +146,6 @@
   }
 }
 
-/* --- the badge ---------------------------------------------------------- */
-
-.badge {
-  flex: none;
-  width: clamp(84px, 11vw, 150px);
-  height: auto;
-  opacity: 0.9;
-  animation: badgeSpin 26s linear infinite;
-}
-
-.badgeText {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.16em;
-  fill: currentColor;
-  text-transform: uppercase;
-}
-
-@keyframes badgeSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (max-width: 860px) {
   .root {
     flex-direction: column;
@@ -194,8 +170,7 @@
     stroke-dashoffset: 0;
     transition: none;
   }
-  .splatter,
-  .badge {
+  .splatter {
     animation: none;
   }
   .splatter i {

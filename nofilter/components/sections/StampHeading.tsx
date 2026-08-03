@@ -6,7 +6,7 @@ import s from './stamp.module.css';
 /**
  * The stamp heading.
  *
- * Five things happen here, and they are deliberately sequenced rather than
+ * Four things happen here, and they are deliberately sequenced rather than
  * fired together — everything arriving at once reads as noise:
  *
  *   1. The stamp presses in — down from above at scale, overshooting and
@@ -14,11 +14,9 @@ import s from './stamp.module.css';
  *   2. Its box draws itself around the words on the same beat.
  *   3. An ink splatter fires on impact and fades.
  *   4. Each letter kicks away from the pointer as it passes.
- *   5. A circular badge rotates beside it, its text set on a path.
  */
 
 const TEXT = 'WHAT IS NO FILTER?';
-const BADGE = 'NO FILTER · EST. 2026 · NO BOXES · NO CATEGORIES · ';
 
 export default function StampHeading() {
   const root = useRef<HTMLDivElement>(null);
@@ -144,20 +142,6 @@ export default function StampHeading() {
           ))}
         </span>
       </div>
-
-      {/* The revolving badge — text on a circle, turning on its own. */}
-      <svg className={s.badge} viewBox="0 0 200 200" aria-hidden="true">
-        <defs>
-          <path id="nf-badge-path" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
-        </defs>
-        <circle cx="100" cy="100" r="86" fill="none" stroke="currentColor" strokeWidth="2" />
-        <circle cx="100" cy="100" r="56" fill="none" stroke="currentColor" strokeWidth="2" />
-        <text className={s.badgeText}>
-          <textPath href="#nf-badge-path" startOffset="0%">
-            {BADGE}
-          </textPath>
-        </text>
-      </svg>
     </div>
   );
 }
