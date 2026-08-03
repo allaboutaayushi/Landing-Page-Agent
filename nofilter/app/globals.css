@@ -114,7 +114,9 @@
 
   /* Fluid scale. The reference keeps only two loud sizes — a page-wide
      wordmark and a section head — everything else is quiet. */
-  --t-wordmark: clamp(3.25rem, 13vw, 14rem);
+  /* The hero is the page's main event and the wordmark is the whole of it —
+     sized to carry the screen rather than to sit politely in the middle. */
+  --t-wordmark: clamp(4rem, 20vw, 22rem);
   --t-display: clamp(2.4rem, 7vw, 7rem);
   --t-section: clamp(2rem, 5.4vw, 5.25rem);
   --t-station: clamp(1.75rem, 4.6vw, 4.25rem);

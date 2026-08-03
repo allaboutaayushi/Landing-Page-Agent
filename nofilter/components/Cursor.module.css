@@ -92,3 +92,62 @@
   opacity: 1;
   transform: scale(1);
 }
+
+/* --------------------------------------------------- the spark trail */
+
+/*
+ * Deliberately not inside .root. That layer blends in difference mode, and
+ * difference over the brand red turns anything light into cyan — every spark
+ * would have come out off-palette. This one paints normally, and sits just
+ * under the cursor so the dot always stays on top of its own trail.
+ */
+.sparks {
+  position: fixed;
+  inset: 0;
+  z-index: 8990;
+  pointer-events: none;
+  display: none;
+}
+
+:global(html.nf-cursor-ready) .sparks {
+  display: block;
+}
+
+:global(html.nf-cursor-out) .sparks {
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+/*
+ * A four-point star rather than a dot. The concave waist is the whole reason
+ * it reads as a sparkle: a circle at this size is just a speck, and the eye
+ * needs the points to call it light.
+ *
+ * Positioned at the origin and moved entirely by transform, so nothing here
+ * ever touches layout. Centring is done in the transform rather than with a
+ * negative margin — the size is set per spark in pixels, so an em margin here
+ * would resolve against the inherited font size and miss.
+ */
+.spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  clip-path: polygon(
+    50% 0%,
+    59% 41%,
+    100% 50%,
+    59% 59%,
+    50% 100%,
+    41% 59%,
+    0% 50%,
+    41% 41%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sparks {
+    display: none;
+  }
+}

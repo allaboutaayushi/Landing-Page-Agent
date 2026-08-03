@@ -33,7 +33,7 @@ const FULL_LEVEL = 0.99;
 /** How long the pour takes once the page is visible. */
 const FILL_MS = 2600;
 /** Bubbles run for this long after it is full, then stop for good. */
-const BUBBLE_MS = 2200;
+const BUBBLE_MS = 3800;
 
 const easeOut = (p: number) => 1 - Math.pow(1 - p, 3);
 
@@ -49,18 +49,18 @@ const easeOut = (p: number) => 1 - Math.pow(1 - p, 3);
  *   dur  how long it takes
  */
 const BUBBLES = [
-  { x: 14, r: 0.075, rise: 0.62, d: 0.0, dur: 1.15 },
-  { x: 27, r: 0.05, rise: 0.78, d: 0.22, dur: 1.35 },
-  { x: 39, r: 0.1, rise: 0.55, d: 0.08, dur: 1.0 },
-  { x: 48, r: 0.058, rise: 0.72, d: 0.5, dur: 1.25 },
-  { x: 58, r: 0.045, rise: 0.84, d: 0.34, dur: 1.45 },
-  { x: 66, r: 0.088, rise: 0.6, d: 0.66, dur: 1.1 },
-  { x: 77, r: 0.055, rise: 0.75, d: 0.15, dur: 1.3 },
-  { x: 86, r: 0.072, rise: 0.66, d: 0.78, dur: 1.2 },
-  { x: 33, r: 0.042, rise: 0.8, d: 0.92, dur: 1.4 },
-  { x: 71, r: 0.047, rise: 0.7, d: 1.04, dur: 1.25 },
-  { x: 21, r: 0.062, rise: 0.68, d: 0.58, dur: 1.2 },
-  { x: 93, r: 0.045, rise: 0.74, d: 0.42, dur: 1.35 },
+  { x: 14, r: 0.075, rise: 0.62, d: 0.0, dur: 1.3 },
+  { x: 39, r: 0.1, rise: 0.55, d: 0.14, dur: 1.15 },
+  { x: 77, r: 0.055, rise: 0.75, d: 0.3, dur: 1.45 },
+  { x: 58, r: 0.045, rise: 0.84, d: 0.52, dur: 1.6 },
+  { x: 27, r: 0.05, rise: 0.78, d: 0.74, dur: 1.5 },
+  { x: 93, r: 0.045, rise: 0.74, d: 0.88, dur: 1.5 },
+  { x: 48, r: 0.058, rise: 0.72, d: 1.06, dur: 1.4 },
+  { x: 66, r: 0.088, rise: 0.6, d: 1.28, dur: 1.2 },
+  { x: 21, r: 0.062, rise: 0.68, d: 1.5, dur: 1.35 },
+  { x: 86, r: 0.072, rise: 0.66, d: 1.68, dur: 1.3 },
+  { x: 33, r: 0.042, rise: 0.8, d: 1.9, dur: 1.55 },
+  { x: 71, r: 0.047, rise: 0.7, d: 2.1, dur: 1.45 },
 ];
 
 type Box = { x: number; y: number; w: number; h: number; line: number; size: number };
